@@ -43,10 +43,10 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <button v-on:click="sumar" class="btn bg-primary text-white">+</button>
-                    <button v-on:click="restar" class="btn bg-danger text-white">-</button>
-                    <button v-on:click="multiplicar" class="btn bg-warning text-white">*</button>
-                    <button v-on:click="dividir" class="btn bg-success text-white">/</button>
+                    <button v-on:click="operaciones('+')" class="btn bg-primary text-white">+</button>
+                    <button v-on:click="operaciones('-')" class="btn bg-danger text-white">-</button>
+                    <button v-on:click="operaciones('*')" class="btn bg-warning text-white">*</button>
+                    <button v-on:click="operaciones('/')" class="btn bg-success text-white">/</button>
                 </div>
             </div>
         </div>
@@ -63,26 +63,23 @@
                 respuesta: 0
             },
             methods: {
-                sumar() {
-                    this.respuesta = parseFloat(this.num1 || 0) +
-                        parseFloat(this.num2 || 0);
-                    this.operacion = '+';
+                operaciones(opcion) {
+                    this.operacion = opcion;
+                    switch (opcion) {
+                        case '+':
+                            this.respuesta = parseFloat(this.num1) + parseFloat(this.num2);
+                            break;
+                        case '-':
+                            this.respuesta = parseFloat(this.num1) - parseFloat(this.num2);
+                            break;
+                        case '*':
+                            this.respuesta = parseFloat(this.num1) * parseFloat(this.num2);
+                            break;
+                        case '/':
+                            this.respuesta = parseFloat(this.num1) / parseFloat(this.num2);
+                            break;
+                    }
                 },
-                restar() {
-                    this.respuesta = parseFloat(this.num1) -
-                        parseFloat(this.num2);
-                    this.operacion = '-';
-                },
-                multiplicar() {
-                    this.respuesta = parseFloat(this.num1) *
-                        parseFloat(this.num2);
-                    this.operacion = '*';
-                },
-                dividir() {
-                    this.respuesta = parseFloat(this.num1) /
-                        parseFloat(this.num2);
-                    this.operacion = '/';
-                }
             }
         });
     </script>
