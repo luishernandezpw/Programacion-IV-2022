@@ -88,6 +88,7 @@
                                 <th>DIRECCION</th>
                                 <th>TEL</th>
                                 <th>DUI</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -97,6 +98,9 @@
                                 <td>{{cliente.direccion}}</td>
                                 <td>{{cliente.telefono}}</td>
                                 <td>{{cliente.dui}}</td>
+                                <td>
+                                    <button class="btn btn-danger" @click="eliminarCliente(cliente)">Eliminar</button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -138,11 +142,18 @@
                         }
                     });
                 },
+                eliminarCliente(cliente){
+                    if( confirm(`Esta seguro de eliminar el cliente ${cliente.nombre}?`) ){
+                        this.cliente.idCliente = cliente.idCliente;
+                        this.cliente.accion = 'eliminar';
+                        this.guardarCliente();
+                    }
+                },
                 modificarCliente(cliente){
                     this.cliente = cliente;
                     this.cliente.accion = 'modificar';
                 },
-                guardarCliente(e){
+                guardarCliente(){
                     let sql = '',
                         parametros = [];
                     if(this.cliente.accion=="nuevo"){
@@ -153,6 +164,9 @@
                         sql = 'UPDATE clientes SET codigo=?, nombre=?, direccion=?, telefono=?, dui=? WHERE idCliente=?';
                         parametros = [this.cliente.codigo, this.cliente.nombre, this.cliente.direccion, 
                             this.cliente.telefono, this.cliente.dui, this.cliente.idCliente];
+                    } else if(this.cliente.accion=="eliminar"){
+                        sql = 'DELETE FROM clientes WHERE idCliente=?';
+                        parametros = [this.cliente.idCliente];
                     }
                     db_sistema.transaction(tx=>{
                             tx.executeSql(sql,
@@ -161,7 +175,7 @@
                                 this.nuevoCliente();
                                 this.obtenerClientes();
                                 this.cliente.mostrar_msg = true;
-                                this.cliente.msg = 'Cliente guardado con exito';
+                                this.cliente.msg = 'Cliente procesado con exito';
                             },
                             (tx, err)=>{
                                 this.cliente.mostrar_msg = true;
