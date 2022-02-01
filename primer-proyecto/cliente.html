@@ -91,7 +91,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="cliente in clientes" :key="cliente.idCliente">
+                            <tr v-for="cliente in clientes" @click="modificarCliente(cliente)" :key="cliente.idCliente">
                                 <td>{{cliente.codigo}}</td>
                                 <td>{{cliente.nombre}}</td>
                                 <td>{{cliente.direccion}}</td>
@@ -138,11 +138,25 @@
                         }
                     });
                 },
+                modificarCliente(cliente){
+                    this.cliente = cliente;
+                    this.cliente.accion = 'modificar';
+                },
                 guardarCliente(e){
+                    let sql = '',
+                        parametros = [];
                     if(this.cliente.accion=="nuevo"){
-                        db_sistema.transaction(tx=>{
-                            tx.executeSql('INSERT INTO clientes (codigo, nombre, direccion, telefono, dui) VALUES (?,?,?,?,?)',
-                            [this.cliente.codigo, this.cliente.nombre, this.cliente.direccion, this.cliente.telefono, this.cliente.dui],
+                        sql = 'INSERT INTO clientes (codigo, nombre, direccion, telefono, dui) VALUES (?,?,?,?,?)';
+                        parametros = [this.cliente.codigo, this.cliente.nombre, this.cliente.direccion, 
+                            this.cliente.telefono, this.cliente.dui];
+                    } else if(this.cliente.accion=="modificar"){
+                        sql = 'UPDATE clientes SET codigo=?, nombre=?, direccion=?, telefono=?, dui=? WHERE idCliente=?';
+                        parametros = [this.cliente.codigo, this.cliente.nombre, this.cliente.direccion, 
+                            this.cliente.telefono, this.cliente.dui, this.cliente.idCliente];
+                    }
+                    db_sistema.transaction(tx=>{
+                            tx.executeSql(sql,
+                            parametros,
                             (tx, res)=>{
                                 this.nuevoCliente();
                                 this.obtenerClientes();
@@ -154,7 +168,6 @@
                                 this.cliente.msg = `Error al guardar el cliente: ${err.message}`;
                             });
                         });
-                    }
                 },
                 obtenerClientes(){
                     db_sistema.transaction(tx=>{
