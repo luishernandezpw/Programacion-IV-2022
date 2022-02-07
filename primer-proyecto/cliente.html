@@ -21,37 +21,37 @@
                 </div>
                 <div class="card-body text-dark">
                     <form method="post" @submit.prevent="guardarCliente" @reset="nuevoCliente">
-                        <div class="row">
+                        <div class="row p-1">
                             <div class="col col-md-2">Codigo:</div>
                             <div class="col col-md-2">
                                 <input title="Ingrese el codigo" v-model="cliente.codigo" pattern="[0-9]{3,10}" required type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row p-1">
                             <div class="col col-md-2">Nombre:</div>
                             <div class="col col-md-3">
                                 <input title="Ingrese el nombre" v-model="cliente.nombre" pattern="[A-Za-zñÑáéíóúü ]{3,75}" required type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row p-1">
                             <div class="col col-md-2">Direccion:</div>
                             <div class="col col-md-3">
                                 <input title="Ingrese la direccion" v-model="cliente.direccion" pattern="[A-Za-zñÑáéíóúü ]{3,100}" required type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row p-1">
                             <div class="col col-md-2">Telefono:</div>
                             <div class="col col-md-2">
                                 <input title="Ingrese el tel" v-model="cliente.telefono" pattern="[0-9]{4}-[0-9]{4}" required type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row p-1">
                             <div class="col col-md-2">DUI:</div>
                             <div class="col col-md-2">
                                 <input title="Ingrese el DUI" v-model="cliente.dui" pattern="[0-9]{8}-[0-9]{1}" required type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row p-1">
                             <div class="col col-md-5 text-center">
                                 <div v-if="cliente.mostrar_msg" class="alert alert-primary alert-dismissible fade show" role="alert">
                                     {{ cliente.msg }}
@@ -78,7 +78,7 @@
                     <table class="table table-dark table-hover">
                         <thead>
                             <tr>
-                                <th colspan="5">
+                                <th colspan="6">
                                     Buscar: <input @keyup="buscandoCliente" v-model="buscar" placeholder="buscar aqui" class="form-control" type="text" >
                                 </th>
                             </tr>
@@ -92,14 +92,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="cliente in clientes" @click="modificarCliente(cliente)" :key="cliente.idCliente">
-                                <td>{{cliente.codigo}}</td>
-                                <td>{{cliente.nombre}}</td>
-                                <td>{{cliente.direccion}}</td>
-                                <td>{{cliente.telefono}}</td>
-                                <td>{{cliente.dui}}</td>
+                            <tr v-for="item in clientes" @click='modificarCliente( item )' :key="item.idCliente">
+                                <td>{{item.codigo}}</td>
+                                <td>{{item.nombre}}</td>
+                                <td>{{item.direccion}}</td>
+                                <td>{{item.telefono}}</td>
+                                <td>{{item.dui}}</td>
                                 <td>
-                                    <button class="btn btn-danger" @click="eliminarCliente(cliente)">Eliminar</button>
+                                    <button class="btn btn-danger" @click="eliminarCliente(item)">Eliminar</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -135,12 +135,16 @@
             },
             methods:{
                 buscandoCliente(){
-                    //console.log(this.buscar);
-                    this.clientes.filter(cliente => {
-                        if(cliente.nombre.toLowerCase().indexOf(this.buscar.toLowerCase()) > -1){
-                            return cliente;
-                        }
-                    });
+                    /*if( this.buscar.trim().length>0 ){
+                        this.clientes = this.clientes.filter(cliente => 
+                            cliente.nombre.toLowerCase().indexOf(this.buscar.toLowerCase()) > -1 || 
+                            cliente.codigo.toLowerCase().indexOf(this.buscar.toLowerCase()) > -1 ||
+                            cliente.dui.toLowerCase().indexOf(this.buscar.toLowerCase()) > -1
+                        );
+                    }else{
+                        this.obtenerClientes();
+                    }*/
+                    this.obtenerClientes(this.buscar);
                 },
                 eliminarCliente(cliente){
                     if( confirm(`Esta seguro de eliminar el cliente ${cliente.nombre}?`) ){
@@ -149,8 +153,8 @@
                         this.guardarCliente();
                     }
                 },
-                modificarCliente(cliente){
-                    this.cliente = cliente;
+                modificarCliente(datos){
+                    this.cliente = JSON.parse(JSON.stringify(datos));
                     this.cliente.accion = 'modificar';
                 },
                 guardarCliente(){
@@ -183,10 +187,9 @@
                             });
                         });
                 },
-                obtenerClientes(){
-                    db_sistema.transaction(tx=>{
-                        tx.executeSql('SELECT * FROM clientes', [], (index, datos)=>{
-                            //this.clientes = datos.rows;
+                obtenerClientes(valor=''){
+                    let respuesta = db_sistema.transaction(tx=>{
+                        tx.executeSql(`SELECT * FROM clientes WHERE nombre like "%${valor}%" OR codigo like "%${valor}%" ORDER BY nombre`, [], (index, datos)=>{
                             this.clientes = [];
                             for(let i=0; i<datos.rows.length; i++){
                                 this.clientes.push(datos.rows[i]);
@@ -212,7 +215,7 @@
                 });
                 this.obtenerClientes();
             }
-        })
+        });
     </script>
 </body>
 </html>
