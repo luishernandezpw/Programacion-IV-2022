@@ -113,10 +113,10 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script>
-        const db_sistema = openDatabase('db_sistema', '1.0', 'Sistema', 5 * 1024 * 1024);
-        if( !db_sistema ){
-            alert('Lo siento, el navagador no soporta BD offline');
-        }
+        var generarIdUnicoFecha = ()=>{
+            let fecha = new Date();
+            return Math.floor(fecha.getTime()/1000).toString(16);
+        };
         var app = new Vue({
             el: '#appSistema',
             data:{
@@ -126,6 +126,7 @@
                     accion : 'nuevo',
                     mostrar_msg : false,
                     msg : '',
+                    idCliente : '',
                     codigo: '',
                     nombre: '',
                     direccion: '',
@@ -148,58 +149,43 @@
                 },
                 eliminarCliente(cliente){
                     if( confirm(`Esta seguro de eliminar el cliente ${cliente.nombre}?`) ){
-                        this.cliente.idCliente = cliente.idCliente;
                         this.cliente.accion = 'eliminar';
-                        this.guardarCliente();
+                        localStorage.removeItem(cliente.idCliente);
+                        this.obtenerClientes();
                     }
+                    this.nuevoCliente();
                 },
                 modificarCliente(datos){
                     this.cliente = JSON.parse(JSON.stringify(datos));
                     this.cliente.accion = 'modificar';
                 },
                 guardarCliente(){
-                    let sql = '',
-                        parametros = [];
                     if(this.cliente.accion=="nuevo"){
-                        sql = 'INSERT INTO clientes (codigo, nombre, direccion, telefono, dui) VALUES (?,?,?,?,?)';
-                        parametros = [this.cliente.codigo, this.cliente.nombre, this.cliente.direccion, 
-                            this.cliente.telefono, this.cliente.dui];
-                    } else if(this.cliente.accion=="modificar"){
-                        sql = 'UPDATE clientes SET codigo=?, nombre=?, direccion=?, telefono=?, dui=? WHERE idCliente=?';
-                        parametros = [this.cliente.codigo, this.cliente.nombre, this.cliente.direccion, 
-                            this.cliente.telefono, this.cliente.dui, this.cliente.idCliente];
-                    } else if(this.cliente.accion=="eliminar"){
-                        sql = 'DELETE FROM clientes WHERE idCliente=?';
-                        parametros = [this.cliente.idCliente];
-                    }
-                    db_sistema.transaction(tx=>{
-                            tx.executeSql(sql,
-                            parametros,
-                            (tx, res)=>{
-                                this.nuevoCliente();
-                                this.obtenerClientes();
-                                this.cliente.mostrar_msg = true;
-                                this.cliente.msg = 'Cliente procesado con exito';
-                            },
-                            (tx, err)=>{
-                                this.cliente.mostrar_msg = true;
-                                this.cliente.msg = `Error al guardar el cliente: ${err.message}`;
-                            });
-                        });
+                        this.cliente.idCliente = generarIdUnicoFecha();
+                    } 
+                    localStorage.setItem(this.cliente.idCliente, JSON.stringify(this.cliente));
+                    this.nuevoCliente();
+                    this.obtenerClientes();
+                    this.cliente.msg = 'Cliente procesado con exito';
                 },
                 obtenerClientes(valor=''){
-                    let respuesta = db_sistema.transaction(tx=>{
-                        tx.executeSql(`SELECT * FROM clientes WHERE nombre like "%${valor}%" OR codigo like "%${valor}%" ORDER BY nombre`, [], (index, datos)=>{
-                            this.clientes = [];
-                            for(let i=0; i<datos.rows.length; i++){
-                                this.clientes.push(datos.rows[i]);
+                    this.clientes = [];
+                    for(let i=0; i<localStorage.length; i++){
+                        let key = localStorage.key(i);
+                        if( valor.trim().length>0 ){
+                            let cliente = JSON.parse(localStorage.getItem(key));
+                            if( cliente.nombre.toLowerCase().indexOf(valor.toLowerCase()) > -1 ){
+                                this.clientes.push(cliente);
                             }
-                        });
-                    });
+                        } else {
+                            this.clientes.push(JSON.parse(localStorage.getItem(key)));
+                        }
+                    }
                 },
                 nuevoCliente(){
                     this.cliente.accion = 'nuevo';
                     this.cliente.msg = '';
+                    this.cliente.idCliente = '';
                     this.cliente.codigo = '';
                     this.cliente.nombre = '';
                     this.cliente.direccion = '';
@@ -208,11 +194,6 @@
                 }
             },
             created(){
-                db_sistema.transaction(tx=>{
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS clientes(idCliente INTEGER PRIMARY KEY AUTOINCREMENT, codigo char(10), nombre char(100), direccion TEXT, telefono TEXT, dui TEXT)');
-                }, err=>{
-                    console.log(err);
-                });
                 this.obtenerClientes();
             }
         });
