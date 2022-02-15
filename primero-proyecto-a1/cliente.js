@@ -20,10 +20,19 @@ Vue.component('cliente', {
             this.obtenerDatos(this.buscar);
         },
         guardarCliente(){
-            if(this.cliente.accion == 'nuevo'){
+            this.obtenerDatos();
+            let clientes = this.clientes || [];
+            if( this.cliente.accion == 'nuevo' ){
                 this.cliente.idCliente = idUnicoFecha();
+                clientes.push(this.cliente);
+            }else if( this.cliente.accion == 'modificar' ){
+                let index = clientes.findIndex(cliente=>cliente.idCliente==this.cliente.idCliente);
+                clientes[index] = this.cliente;
+            }else if( this.cliente.accion == 'eliminar' ){
+                let index = clientes.findIndex(cliente=>cliente.idCliente==this.cliente.idCliente);
+                clientes.splice(index,1);
             }
-            localStorage.setItem(this.cliente.idCliente, JSON.stringify(this.cliente));
+            localStorage.setItem('clientes', JSON.stringify(clientes));
             this.cliente.msg = 'Cliente procesado con exito';
             this.nuevoCliente();
             this.obtenerDatos();
@@ -41,9 +50,8 @@ Vue.component('cliente', {
         },
         obtenerDatos(busqueda=''){
             this.clientes = [];
-            for(let i=0; i<localStorage.length; i++){
-                let key  = localStorage.key(i),
-                    data = JSON.parse(localStorage.getItem(key));
+            for(let i=0; i<JSON.parse(localStorage.getItem('clientes')).length; i++){
+                let data = JSON.parse(localStorage.getItem('clientes'))[i];
                 if( this.buscar.length>0 ){
                     if( data.nombre.toLowerCase().indexOf(this.buscar.toLowerCase())>-1 ){
                         this.clientes.push(data);
@@ -62,7 +70,6 @@ Vue.component('cliente', {
             this.cliente.telefono = '';
             this.cliente.dui = '';
             this.cliente.msg = '';
-            console.log(this.cliente);
         }
     }, 
     created(){
