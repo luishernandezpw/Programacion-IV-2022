@@ -50,14 +50,16 @@ Vue.component('cliente', {
         },
         obtenerDatos(busqueda=''){
             this.clientes = [];
-            for(let i=0; i<JSON.parse(localStorage.getItem('clientes')).length; i++){
-                let data = JSON.parse(localStorage.getItem('clientes'))[i];
-                if( this.buscar.length>0 ){
-                    if( data.nombre.toLowerCase().indexOf(this.buscar.toLowerCase())>-1 ){
+            if( localStorage.getItem('clientes')!=null ){
+                for(let i=0; i<JSON.parse(localStorage.getItem('clientes')).length; i++){
+                    let data = JSON.parse(localStorage.getItem('clientes'))[i];
+                    if( this.buscar.length>0 ){
+                        if( data.nombre.toLowerCase().indexOf(this.buscar.toLowerCase())>-1 ){
+                            this.clientes.push(data);
+                        }
+                    }else{
                         this.clientes.push(data);
                     }
-                }else{
-                    this.clientes.push(data);
                 }
             }
         },

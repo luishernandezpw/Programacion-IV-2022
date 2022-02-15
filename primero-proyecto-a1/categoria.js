@@ -17,8 +17,17 @@ Vue.component('categoria', {
             this.obtenerDatos(this.buscar);
         },
         guardarCategoria(){
+            this.obtenerDatos();
+            let categorias = this.categorias || [];
             if(this.categoria.accion == 'nuevo'){
                 this.categoria.idCategoria = idUnicoFecha();
+                categorias.push(this.categoria);
+            }else if(this.categoria.accion == 'modificar'){
+                let index = categorias.findIndex(categoria=>categoria.idCategoria==this.categoria.idCategoria);
+                categorias[index] = this.categoria;
+            }else if(this.categoria.accion == 'eliminar'){
+                let index = categorias.findIndex(categoria=>categoria.idCategoria==this.categoria.idCategoria);
+                categorias.splice(index,1);
             }
             localStorage.setItem('categorias', JSON.stringify(this.categoria));
             this.categoria.msg = 'Categoria procesado con exito';
@@ -38,14 +47,16 @@ Vue.component('categoria', {
         },
         obtenerDatos(busqueda=''){
             this.categorias = [];
-            for(let i=0; i<localStorage.getItem('categorias').length; i++){
-                let data = JSON.parse(localStorage.getItem('categorias'));
-                if( this.buscar.length>0 ){
-                    if( data.nombre.toLowerCase().indexOf(this.buscar.toLowerCase())>-1 ){
+            if( localStorage.getItem('categorias')!=null ){
+                for(let i=0; i<JSON.parse(localStorage.getItem('categorias')).length; i++){
+                    let data = JSON.parse(localStorage.getItem('categorias'))[i];
+                    if( this.buscar.length>0 ){
+                        if( data.nombre.toLowerCase().indexOf(this.buscar.toLowerCase())>-1 ){
+                            this.categorias.push(data);
+                        }
+                    }else{
                         this.categorias.push(data);
                     }
-                }else{
-                    this.categorias.push(data);
                 }
             }
         },
