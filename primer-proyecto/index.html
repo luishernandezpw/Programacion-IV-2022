@@ -13,50 +13,41 @@
 </head>
 
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">::.UGB.::</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Clientes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Proveedores</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Categorias</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Productos</a>
-                        </li>
-                    </ul>
-                </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">::.UGB.::</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                     <li class="nav-item">
+                        <a data-form="cliente" class="nav-link mostrar" href="#">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-form="proveedor" class="nav-link mostrar" href="#">Proveedores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-form="categoria" class="nav-link mostrar" href="#">Categorias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-form="producto" class="nav-link mostrar" href="#">Productos</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
+        </div>
+    </nav>
+    <div id="appSistema" class="container-fluid">
+        <cliente ref="cliente" v-show="forms['cliente'].mostrar"></cliente>
+        <categoria ref="categoria" v-show="forms['categoria'].mostrar"></categoria>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-    <script>
-        const app = new Vue({
-            el: '#app',
-            data: {
-
-            },
-            methods: {
-
-            }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js" crossorigin="anonymous"></script>
+    <script src="cliente.js"></script>
+    <script src="categoria.js"></script>
+    <script src="main.js"></script>
 </body>
 
 </html>

@@ -1,18 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administracion de Clientes</title>
-
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-</head>
-<body>
-    <div class="appSistema" id="appSistema">
-        <div class="container-fluid">
+Vue.component('cliente',{
+    data:()=>{
+        return {
+            buscar:'',
+            clientes:[],
+            cliente:{
+                accion : 'nuevo',
+                mostrar_msg : false,
+                msg : '',
+                idCliente : '',
+                codigo: '',
+                nombre: '',
+                direccion: '',
+                telefono: '',
+                dui: ''
+            }
+        }
+    },
+    methods:{
+        buscandoCliente(){
+            this.obtenerClientes(this.buscar);
+        },
+        eliminarCliente(cliente){
+            if( confirm(`Esta seguro de eliminar el cliente ${cliente.nombre}?`) ){
+                this.cliente.accion = 'eliminar';
+                this.cliente.idCliente = cliente.idCliente;
+                this.guardarCliente();
+            }
+            this.nuevoCliente();
+        },
+        modificarCliente(datos){
+            this.cliente = JSON.parse(JSON.stringify(datos));
+            this.cliente.accion = 'modificar';
+        },
+        guardarCliente(){
+            this.obtenerClientes();
+            let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+            if(this.cliente.accion=="nuevo"){
+                this.cliente.idCliente = generarIdUnicoFecha();
+                clientes.push(this.cliente);
+            } else if(this.cliente.accion=="modificar"){
+                let index = clientes.findIndex(cliente=>cliente.idCliente==this.cliente.idCliente);
+                clientes[index] = this.cliente;
+            } else if( this.cliente.accion=="eliminar" ){
+                let index = clientes.findIndex(cliente=>cliente.idCliente==this.cliente.idCliente);
+                clientes.splice(index,1);
+            }
+            localStorage.setItem('clientes', JSON.stringify(clientes));
+            this.nuevoCliente();
+            this.obtenerClientes();
+            this.cliente.msg = 'Cliente procesado con exito';
+        },
+        obtenerClientes(valor=''){
+            this.clientes = [];
+            let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+            this.clientes = clientes.filter(cliente=>cliente.nombre.toLowerCase().indexOf(valor.toLowerCase())>-1);
+        },
+        nuevoCliente(){
+            this.cliente.accion = 'nuevo';
+            this.cliente.msg = '';
+            this.cliente.idCliente = '';
+            this.cliente.codigo = '';
+            this.cliente.nombre = '';
+            this.cliente.direccion = '';
+            this.cliente.telefono = '';
+            this.cliente.dui = '';
+        }
+    },
+    created(){
+        this.obtenerClientes();
+    },
+    template:`
+        <div id="appCiente">
             <div class="card text-white" id="carCliente">
                 <div class="card-header bg-primary">
                     Registro de Clientes
@@ -107,96 +165,5 @@
                 </div>
             </div>
         </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" 
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-    <script>
-        var generarIdUnicoFecha = ()=>{
-            let fecha = new Date();
-            return Math.floor(fecha.getTime()/1000).toString(16);
-        };
-        var app = new Vue({
-            el: '#appSistema',
-            data:{
-                buscar:'',
-                clientes:[],
-                cliente:{
-                    accion : 'nuevo',
-                    mostrar_msg : false,
-                    msg : '',
-                    idCliente : '',
-                    codigo: '',
-                    nombre: '',
-                    direccion: '',
-                    telefono: '',
-                    dui: ''
-                }
-            },
-            methods:{
-                buscandoCliente(){
-                    /*if( this.buscar.trim().length>0 ){
-                        this.clientes = this.clientes.filter(cliente => 
-                            cliente.nombre.toLowerCase().indexOf(this.buscar.toLowerCase()) > -1 || 
-                            cliente.codigo.toLowerCase().indexOf(this.buscar.toLowerCase()) > -1 ||
-                            cliente.dui.toLowerCase().indexOf(this.buscar.toLowerCase()) > -1
-                        );
-                    }else{
-                        this.obtenerClientes();
-                    }*/
-                    this.obtenerClientes(this.buscar);
-                },
-                eliminarCliente(cliente){
-                    if( confirm(`Esta seguro de eliminar el cliente ${cliente.nombre}?`) ){
-                        this.cliente.accion = 'eliminar';
-                        localStorage.removeItem(cliente.idCliente);
-                        this.obtenerClientes();
-                    }
-                    this.nuevoCliente();
-                },
-                modificarCliente(datos){
-                    this.cliente = JSON.parse(JSON.stringify(datos));
-                    this.cliente.accion = 'modificar';
-                },
-                guardarCliente(){
-                    if(this.cliente.accion=="nuevo"){
-                        this.cliente.idCliente = generarIdUnicoFecha();
-                    } 
-                    localStorage.setItem(this.cliente.idCliente, JSON.stringify(this.cliente));
-                    this.nuevoCliente();
-                    this.obtenerClientes();
-                    this.cliente.msg = 'Cliente procesado con exito';
-                },
-                obtenerClientes(valor=''){
-                    this.clientes = [];
-                    for(let i=0; i<localStorage.length; i++){
-                        let key = localStorage.key(i);
-                        if( valor.trim().length>0 ){
-                            let cliente = JSON.parse(localStorage.getItem(key));
-                            if( cliente.nombre.toLowerCase().indexOf(valor.toLowerCase()) > -1 ){
-                                this.clientes.push(cliente);
-                            }
-                        } else {
-                            this.clientes.push(JSON.parse(localStorage.getItem(key)));
-                        }
-                    }
-                },
-                nuevoCliente(){
-                    this.cliente.accion = 'nuevo';
-                    this.cliente.msg = '';
-                    this.cliente.idCliente = '';
-                    this.cliente.codigo = '';
-                    this.cliente.nombre = '';
-                    this.cliente.direccion = '';
-                    this.cliente.telefono = '';
-                    this.cliente.dui = '';
-                }
-            },
-            created(){
-                this.obtenerClientes();
-            }
-        });
-    </script>
-</body>
-</html>
+    `
+});
