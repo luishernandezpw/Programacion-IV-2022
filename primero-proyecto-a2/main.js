@@ -61,3 +61,8 @@ document.addEventListener('DOMContentLoaded', event=>{
         });
     });
 });
+
+function abrirStore(store, modo){
+    let tx = db.transaction(store, modo);
+    return tx.objectStore(store);
+}

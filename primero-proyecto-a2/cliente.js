@@ -20,8 +20,7 @@ Vue.component('cliente', {
             this.obtenerDatos(this.buscar);
         },
         guardarCliente(){
-            let store = this.abrirStore('clientes','readwrite');
-
+            let store = abrirStore('clientes','readwrite');
             if( this.cliente.accion == 'nuevo' ){
                 this.cliente.idCliente = idUnicoFecha();
             }
@@ -41,7 +40,7 @@ Vue.component('cliente', {
         },
         eliminarCliente(data){
             if( confirm(`¿Esta seguro de eliminar el cliente ${data.nombre}?`) ){
-                let store = this.abrirStore('clientes','readwrite'),
+                let store = abrirStore('clientes','readwrite'),
                     query = store.delete(data.idCliente);
                 query.onsuccess=e=>{
                     this.cliente.msg = 'Cliente eliminado con exito';
@@ -54,19 +53,14 @@ Vue.component('cliente', {
             }
         },
         obtenerDatos(busqueda=''){
-            let store = this.abrirStore('clientes', 'readonly'),
+            let store = abrirStore('clientes', 'readonly'),
                 data = store.getAll();
             data.onsuccess = resp=>{
-                this.clientes = data.result;
+                this.clientes = data.result.filter(cliente=>cliente.nombre.toLowerCase().indexOf(busqueda.toLowerCase())>-1);
             };
             data.onerror = e=>{
                 this.cliente.msg = `Error al obtener los datos ${e.target.error}`;
             };
-        },
-        abrirStore(store, modo){
-            console.log(db);
-            let tx = db.transaction(store, modo);
-            return tx.objectStore(store);
         },
         nuevoCliente(){
             this.cliente.accion = 'nuevo';

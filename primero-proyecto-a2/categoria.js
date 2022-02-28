@@ -17,22 +17,19 @@ Vue.component('categoria', {
             this.obtenerDatos(this.buscar);
         },
         guardarCategoria(){
-            this.obtenerDatos();
-            let categorias = this.categorias || [];
+            let store = abrirStore('categorias','readwrite');
             if(this.categoria.accion == 'nuevo'){
                 this.categoria.idCategoria = idUnicoFecha();
-                categorias.push(this.categoria);
-            }else if(this.categoria.accion == 'modificar'){
-                let index = categorias.findIndex(categoria=>categoria.idCategoria==this.categoria.idCategoria);
-                categorias[index] = this.categoria;
-            }else if(this.categoria.accion == 'eliminar'){
-                let index = categorias.findIndex(categoria=>categoria.idCategoria==this.categoria.idCategoria);
-                categorias.splice(index,1);
             }
-            localStorage.setItem('categorias', JSON.stringify(this.categoria));
-            this.categoria.msg = 'Categoria procesado con exito';
-            this.nuevoCategoria();
-            this.obtenerDatos();
+            let query = store.put(this.categoria);
+            query.onsuccess=e=>{
+                this.categoria.msg = 'Categoria procesado con exito';
+                this.nuevoCategoria();
+                this.obtenerDatos();
+            };
+            query.onerror=e=>{
+                this.categoria.msg = `Error al procesar la categoria ${e.target.error}`;
+            };
         },
         modificarCategoria(data){
             this.categoria = JSON.parse(JSON.stringify(data));
@@ -40,25 +37,27 @@ Vue.component('categoria', {
         },
         eliminarCategoria(data){
             if( confirm(`¿Esta seguro de eliminar el categoria ${data.nombre}?`) ){
-                this.categoria.idCategoria = data.idCategoria;
-                this.categoria.accion = 'eliminar';
-                this.guardarCategoria();
+                let store = abrirStore('categorias','readwrite'),
+                    query = store.delete(data.idCategoria);
+                query.onsuccess=e=>{
+                    this.categoria.msg = 'Categoria eliminado con exito';
+                    this.nuevoCategoria();
+                    this.obtenerDatos();
+                };
+                query.onerror=e=>{
+                    this.categoria.msg = `Error al procesar la categoria ${e.target.error}`;
+                };
             }
         },
         obtenerDatos(busqueda=''){
-            this.categorias = [];
-            if( localStorage.getItem('categorias')!=null ){
-                for(let i=0; i<JSON.parse(localStorage.getItem('categorias')).length; i++){
-                    let data = JSON.parse(localStorage.getItem('categorias'))[i];
-                    if( this.buscar.length>0 ){
-                        if( data.nombre.toLowerCase().indexOf(this.buscar.toLowerCase())>-1 ){
-                            this.categorias.push(data);
-                        }
-                    }else{
-                        this.categorias.push(data);
-                    }
-                }
-            }
+            let store = abrirStore('categorias', 'readonly'),
+                data = store.getAll();
+            data.onsuccess = resp=>{
+                this.categorias = data.result.filter(categoria=>categoria.nombre.toLowerCase().indexOf(busqueda.toLowerCase())>-1);
+            };
+            data.onerror = e=>{
+                this.categoria.msg = `Error al obtener los datos ${e.target.error}`;
+            };
         },
         nuevoCategoria(){
             this.categoria.accion = 'nuevo';
@@ -70,7 +69,7 @@ Vue.component('categoria', {
         }
     }, 
     created(){
-        this.obtenerDatos();
+        
     },
     template: `
         <div id='appCategoria'>
