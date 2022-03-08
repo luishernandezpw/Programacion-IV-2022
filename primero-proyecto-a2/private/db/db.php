@@ -3,7 +3,7 @@ class DB{
     private $conexion, $result;
 
     public function DB($server, $user, $pass){
-        $this->conexion = new PDO($sever, $user, $pass, array(PDO::ATTR_EMULATE_PREPARES => false, 
+        $this->conexion = new PDO($server, $user, $pass, array(PDO::ATTR_EMULATE_PREPARES => false, 
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)) or die("Error en la conexion");
     }
     public function consultas($sql=''){

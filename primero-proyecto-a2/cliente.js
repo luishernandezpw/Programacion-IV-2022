@@ -26,6 +26,16 @@ Vue.component('cliente', {
             }
             let query = store.put(this.cliente);
             query.onsuccess=e=>{
+                fetch(`modulos/cliente/cliente.php?cliente=${JSON.stringify(this.cliente)}&
+                    accion=recibir_datos`,
+                    {credentials:'same-origin'})
+                    .then(res=>res.json())
+                    .then(data=>{
+                        this.cliente.msg = 'Cliente sincronizado con exito en el servidor'
+                    })
+                    .catch(err=>{
+                        this.cliente.msg = `Error al sincronizar el cliente en el servidor: ${err}`
+                    });
                 this.cliente.msg = 'Cliente procesado con exito';
                 this.nuevoCliente();
                 this.obtenerDatos();

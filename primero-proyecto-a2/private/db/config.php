@@ -4,5 +4,5 @@
  */
 include('db.php');
 //                  server, user, pass
-$conexion = new DB('localhost', 'root', '');
+$conexion = new DB('mysql:host=localhost;charset=utf8', 'root', '');
 ?>
