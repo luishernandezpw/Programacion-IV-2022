@@ -1,6 +1,9 @@
 <?php
 include('../../db/DB.php');
 
+$class_cliente =  new cliente($conexion);
+$datos = isset($datos) ? $datos : '[]';
+print_r($class_cliente->$accion($datos));
 class cliente{
     private $datos=[], $db;
     public $respuesta = ['msg'=>'correcto'];
@@ -28,9 +31,31 @@ class cliente{
         if( empty(trim($this->datos['dui'])) ){
             $this->respuesta['msg'] = 'Por favor ingrese el dui';
         }
+        return $this->almacenar_datos();
     }
     private function almacenar_datos(){
-        
+        if( $this->respuesta['msg']=='correcto' ){
+            if( $this->datos['accion']=='nuevo' ){
+                $this->db->consultas('INSERT INTO clientes(codigo, nombre, direccion, telefono, dui) 
+                    VALUES(?,?,?,?,?)',
+                    $this->datos['codigo'],$this->datos['nombre'],$this->datos['direccion'],
+                    $this->datos['telefono'], $this->datos['dui']
+                );
+                return $this->db->obtenerUltimoId();
+            }else if( $this->datos['accion']=='modificar' ){
+                $this->db->consultas('UPDATE clientes SET codigo=?, nombre=?, direccion=?, telefono=?, dui=? 
+                    WHERE idCliente=?',
+                    $this->datos['codigo'],$this->datos['nombre'],$this->datos['direccion'],
+                    $this->datos['telefono'], $this->datos['dui'], $this->datos['idCliente']
+                );
+                return $this->datos['idCliente'];
+            }else if( $this->datos['accion']=='eliminar' ){
+                $this->db->consultas('DELETE FROM clientes WHERE idCliente=?', $this->datos['idCliente']);
+                return $this->datos['idCliente'];
+            }
+        } else{
+            return $this->respuesta;
+        }
     }
 }
 ?>
