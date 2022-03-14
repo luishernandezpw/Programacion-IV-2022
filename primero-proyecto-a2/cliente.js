@@ -19,23 +19,26 @@ Vue.component('cliente', {
         buscarCliente(){
             this.obtenerDatos(this.buscar);
         },
+        sincronizarDatosServidor(cliente=''){
+            fetch(`modulos/cliente/cliente.php?cliente=${JSON.stringify(cliente)}&
+                accion=recibir_datos`,
+                {credentials:'same-origin'})
+                .then(res=>res.json())
+                .then(data=>{
+                    this.cliente.msg = 'Cliente sincronizado con exito en el servidor';
+                })
+                .catch(err=>{
+                    this.cliente.msg = `Error al sincronizar el cliente en el servidor: ${err}`
+                });
+        },
         guardarCliente(){
-            let store = abrirStore('clientes','readwrite');
             if( this.cliente.accion == 'nuevo' ){
                 this.cliente.idCliente = idUnicoFecha();
             }
-            let query = store.put(this.cliente);
+            let store = abrirStore('clientes','readwrite'),
+                query = store.put(this.cliente);
             query.onsuccess=e=>{
-                fetch(`modulos/cliente/cliente.php?cliente=${JSON.stringify(this.cliente)}&
-                    accion=recibir_datos`,
-                    {credentials:'same-origin'})
-                    .then(res=>res.json())
-                    .then(data=>{
-                        this.cliente.msg = 'Cliente sincronizado con exito en el servidor'
-                    })
-                    .catch(err=>{
-                        this.cliente.msg = `Error al sincronizar el cliente en el servidor: ${err}`
-                    });
+                this.sincronizarDatosServidor(this.cliente);
                 this.cliente.msg = 'Cliente procesado con exito';
                 this.nuevoCliente();
                 this.obtenerDatos();
@@ -53,6 +56,8 @@ Vue.component('cliente', {
                 let store = abrirStore('clientes','readwrite'),
                     query = store.delete(data.idCliente);
                 query.onsuccess=e=>{
+                    data.accion = 'eliminar';
+                    this.sincronizarDatosServidor(data);
                     this.cliente.msg = 'Cliente eliminado con exito';
                     this.nuevoCliente();
                     this.obtenerDatos();
@@ -66,6 +71,29 @@ Vue.component('cliente', {
             let store = abrirStore('clientes', 'readonly'),
                 data = store.getAll();
             data.onsuccess = resp=>{
+                if( data.result.length<=0 ){
+                    fetch(`modulos/cliente/cliente.php?accion=obtener_datos`,
+                        {credentials:'same-origin'})
+                        .then(res=>res.json())
+                        .then(data=>{
+                            this.clientes = data;
+                            this.cliente.msg = 'Clientes obtenidos con exito';
+
+                            data.map(cliente=>{
+                                let store = abrirStore('clientes','readwrite'),
+                                    query = store.put(cliente);
+                                query.onsuccess=e=>{
+                                    this.cliente.msg = 'Clientes guardados en local';
+                                };
+                                query.onerror=e=>{
+                                    this.cliente.msg = `Error al obtener clientes ${e.target.error}`;
+                                };
+                            });
+                        })
+                        .catch(err=>{
+                            this.cliente.msg = `Error al sincronizar el cliente en el servidor: ${err}`
+                        });
+                }
                 this.clientes = data.result.filter(cliente=>cliente.nombre.toLowerCase().indexOf(busqueda.toLowerCase())>-1);
             };
             data.onerror = e=>{
