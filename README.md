@@ -7,6 +7,7 @@ Desarrollar el prototipo funcional del proyecto final de (Ingeniería de softwar
 - Laravel
 - Vuejs
 - Bootstrap
+- Almacenamiento en Local (WebSQL, localStorage, IndexedDB)
 - MySQL
 - PHP
 - Nodejs
@@ -21,11 +22,12 @@ Desarrollar el prototipo funcional del proyecto final de (Ingeniería de softwar
 - Chats en tiempo real
 - Notificaciones PUSH en tiempo real
 - UI/UX (Interfaces de Usurios que generen experiencia agradable de usuario)
+- Offline (Permita trabajar sin conexion a internet)
 
-## Presentar los siguientes requerimientos a fecha 11/04/2021:
+## Presentar los siguientes requerimientos a fecha Pendiente:
 - El mapa del producto
 - Objetivo del producto (alcance del desarrollo) 
-- Scketch del proyecto (Hasta 18/04/2021)
+- Scketch del proyecto (Hasta Pendiente)
 # Link sobre contenido interansante:
 1. Documentacion oficial de Bootstrap: https://getbootstrap.com/docs/5.0/getting-started/introduction/
 2. Documentacion oficial de Vue.JS: https://vuejs.org/
