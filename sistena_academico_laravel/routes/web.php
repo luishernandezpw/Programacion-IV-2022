@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes();
+
+Route::apiResources([
+    'alumnos' => Alumno::class,
+    'docentes' => 'DocenteController',
+    'materias' => 'MateriaController',
+    'matriculas' => 'MatriculaController',
+    'inscripciones' => 'InscripcionController',
+    'notas' => 'NotaController',
+]);
 
 Route::get('/', function () {
     return view('welcome');
