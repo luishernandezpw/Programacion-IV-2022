@@ -7,6 +7,7 @@ Desarrollar el prototipo funcional del proyecto final de (Ingeniería de softwar
 - Laravel
 - Vuejs
 - Bootstrap
+- Almacenamiento en Local (WebSQL, localStorage, IndexedDB)
 - MySQL
 - PHP
 - Nodejs
@@ -21,6 +22,7 @@ Desarrollar el prototipo funcional del proyecto final de (Ingeniería de softwar
 - Chats en tiempo real
 - Notificaciones PUSH en tiempo real
 - UI/UX (Interfaces de Usurios que generen experiencia agradable de usuario)
+- Offline (Permita trabajar sin conexion a internet)
 
 ## Presentar los siguientes requerimientos a fecha 11/04/2021:
 - El mapa del producto
