@@ -14,7 +14,7 @@ class Alumnos extends Controller
      */
     public function index()
     {
-        //
+        return alumno::get();//select * from alumnos;
     }
 
     /**
@@ -35,7 +35,8 @@ class Alumnos extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $id = Alumnos::create($request->all())->id;
+        return response()->json(['id' => $id], 200);
     }
 
     /**
@@ -46,7 +47,7 @@ class Alumnos extends Controller
      */
     public function show(Alumno $alumno)
     {
-        //
+        return $alumno;
     }
 
     /**
@@ -69,7 +70,8 @@ class Alumnos extends Controller
      */
     public function update(Request $request, Alumno $alumno)
     {
-        //
+        $alumno->update($request->all());
+        return response()->json($request->id, 200);
     }
 
     /**
@@ -80,6 +82,7 @@ class Alumnos extends Controller
      */
     public function destroy(Alumno $alumno)
     {
-        //
+        $alumno->delete();
+        return response()->json($alumno->id, 200);
     }
 }

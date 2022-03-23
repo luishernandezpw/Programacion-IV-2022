@@ -7,7 +7,11 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-
+window.db = '';
+window.idUnicoFecha = ()=>{
+    let fecha = new Date();
+    return Math.floor(fecha.getTime()/1000).toString(16);
+}
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -19,7 +23,7 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('alumno-component', require('./components/AlumnoComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -29,4 +33,54 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const app = new Vue({
     el: '#app',
+    data:{
+        forms:{
+            alumno:{mostrar:false},
+            materia:{mostrar:false},
+            docente:{mostrar:false},
+        }
+    },
+    methods:{
+        abrirForm(form){
+            this.forms[form].mostrar = !this.forms[form].mostrar;
+        },
+        abrirBd(){
+            /**
+             * Mecanismo de almacenamiento local:
+             * 1. WebSQL
+             * 2. localStorage
+             * 3. IndexedDB
+             */
+            let indexDb = indexedDB.open('db_sistema',1);
+            indexDb.onupgradeneeded = (e)=>{
+                let db = e.target.result,
+                tblalumnos = db.createObjectStore('alumnos',{ keyPath: 'idAlumno' }),
+                tblmaterias = db.createObjectStore('materias',{ keyPath: 'idMateria' }),
+                tbldocente = db.createObjectStore('docente',{ keyPath: 'idDocente' }),
+                tblmatricula = db.createObjectStore('matricula',{ keyPath: 'idMatricula' });
+
+                tblalumnos.createIndex('idAlumno','idAlumno',{ unique: true });
+                tblalumnos.createIndex('codigo','codigo',{ unique: false });
+                tblalumnos.createIndex('id','id',{ unique: false });
+
+                tblmaterias.createIndex('idMateria','idMateria', { unique: true });
+                tblmaterias.createIndex('codigo','codigo', { unique: false });
+
+                tbldocente.createIndex('idDocente','idDocente', { unique: true });
+                tbldocente.createIndex('codigo', 'codigo',{unique:false});
+
+                tblmatricula.createIndex('idMatricula','iMatricula', { unique: true });
+                tblmatricula.createIndex('idAlumno','idAlumno', { unique: false });  
+            };
+            indexDb.onsuccess = (e)=>{
+                db = e.target.result;
+            };
+            indexDb.onerror = (e)=>{
+                console.log(e.target.error);
+            };
+        }
+    },
+    created(){
+        this.abrirBd();
+    }
 });
