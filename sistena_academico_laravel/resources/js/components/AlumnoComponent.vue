@@ -104,6 +104,7 @@
                 alumno: {
                     accion: 'nuevo',
                     msg : '',
+                    id : 0,
                     idAlumno: '',
                     codigo: '',
                     nombre: '',
@@ -117,26 +118,32 @@
             buscarAlumno(){
                 this.obtenerDatos(this.buscar);
             },
-            sincronizarDatosServidor(alumno=''){
-                fetch(`modulos/alumno/alumno.php?alumno=${JSON.stringify(alumno)}&
-                    accion=recibir_datos`,
-                    {credentials:'same-origin'})
-                    .then(res=>res.json())
-                    .then(data=>{
-                        this.alumno.msg = 'Alumno sincronizado con exito en el servidor';
-                    })
-                    .catch(err=>{
-                        this.alumno.msg = `Error al sincronizar el alumno en el servidor: ${err}`
-                    });
+            async sincronizarDatosServidor(alumno='', metodo='POST', url='alumnos'){
+                await axios({
+                    method: metodo,
+                    url,
+                    data: alumno,
+                })
+                .then(res=>{
+                    this.alumno.msg = 'Alumno sincronizado con exito en el servidor';
+                })
+                .catch(err=>{
+                    this.alumno.msg = `Error al sincronizar el alumno en el servidor: ${err}`
+                });
             },
             guardarAlumno(){
+                let metodo = 'PUT',
+                    url = `alumnos/${this.alumno.id}`;
                 if( this.alumno.accion == 'nuevo' ){
                     this.alumno.idAlumno = idUnicoFecha();
+                    metodo = 'POST';
+                    url = 'alumnos';
                 }
+                this.sincronizarDatosServidor(this.alumno, metodo, url);
+
                 let store = this.abrirStore('alumnos','readwrite'),
                     query = store.put(this.alumno);
                 query.onsuccess=e=>{
-                    this.sincronizarDatosServidor(this.alumno);
                     this.alumno.msg = 'Alumno procesado con exito';
                     this.nuevoAlumno();
                     this.obtenerDatos();
@@ -152,10 +159,12 @@
             eliminarAlumno(data){
                 if( confirm(`¿Esta seguro de eliminar el alumno ${data.nombre}?`) ){
                     let store = this.abrirStore('alumnos','readwrite'),
-                        query = store.delete(data.idAlumno);
+                        query = store.delete(data.idAlumno),
+                        metodo = 'DELETE',
+                        url = `alumnos/${data.id}`;
+                    this.sincronizarDatosServidor(data, metodo, url);    
                     query.onsuccess=e=>{
                         data.accion = 'eliminar';
-                        this.sincronizarDatosServidor(data);
                         this.alumno.msg = 'Alumno eliminado con exito';
                         this.nuevoAlumno();
                         this.obtenerDatos();
@@ -170,7 +179,7 @@
                     data = store.getAll();
                 data.onsuccess = resp=>{
                     if( data.result.length<=0 ){
-                        fetch(`modulos/alumno/alumno.php?accion=obtener_datos`,
+                        fetch(`alumnos`,
                             {credentials:'same-origin'})
                             .then(res=>res.json())
                             .then(data=>{

@@ -3,7 +3,6 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-
 require('./bootstrap');
 
 window.Vue = require('vue');
@@ -43,6 +42,7 @@ const app = new Vue({
     methods:{
         abrirForm(form){
             this.forms[form].mostrar = !this.forms[form].mostrar;
+            this.$refs[form].obtenerDatos();
         },
         abrirBd(){
             /**
@@ -61,7 +61,6 @@ const app = new Vue({
 
                 tblalumnos.createIndex('idAlumno','idAlumno',{ unique: true });
                 tblalumnos.createIndex('codigo','codigo',{ unique: false });
-                tblalumnos.createIndex('id','id',{ unique: false });
 
                 tblmaterias.createIndex('idMateria','idMateria', { unique: true });
                 tblmaterias.createIndex('codigo','codigo', { unique: false });

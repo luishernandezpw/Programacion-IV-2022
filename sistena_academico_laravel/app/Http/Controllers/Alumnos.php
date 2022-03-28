@@ -12,7 +12,7 @@ class Alumnos extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() //GET
     {
         return alumno::get();//select * from alumnos;
     }
@@ -33,9 +33,9 @@ class Alumnos extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request)//POST
     {
-        $id = Alumnos::create($request->all())->id;
+        $id = Alumno::create($request->all())->id;
         return response()->json(['id' => $id], 200);
     }
 
@@ -68,7 +68,7 @@ class Alumnos extends Controller
      * @param  \App\Alumno  $alumno
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Alumno $alumno)
+    public function update(Request $request, Alumno $alumno)//PUT
     {
         $alumno->update($request->all());
         return response()->json($request->id, 200);
@@ -80,7 +80,7 @@ class Alumnos extends Controller
      * @param  \App\Alumno  $alumno
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Alumno $alumno)
+    public function destroy(Alumno $alumno)//DELETE
     {
         $alumno->delete();
         return response()->json($alumno->id, 200);

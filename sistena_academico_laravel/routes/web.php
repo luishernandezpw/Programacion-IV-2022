@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::apiResources([
-    'alumnos' => Alumno::class,
+    'alumnos' => Alumnos::class,
     'docentes' => 'DocenteController',
     'materias' => 'MateriaController',
     'matriculas' => 'MatriculaController',
