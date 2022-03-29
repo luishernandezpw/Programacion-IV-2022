@@ -125,11 +125,27 @@
                     data: alumno,
                 })
                 .then(res=>{
+                    if( alumno.accion=='nuevo' ){
+                        alumno.id = res.data.id;
+                        this.actualizarLocal(alumno);
+                    }
                     this.alumno.msg = 'Alumno sincronizado con exito en el servidor';
                 })
                 .catch(err=>{
                     this.alumno.msg = `Error al sincronizar el alumno en el servidor: ${err}`
                 });
+            },
+            actualizarLocal(alumno){
+                let store = this.abrirStore('alumnos','readwrite'),
+                    query = store.put(alumno);
+                query.onsuccess=e=>{
+                    this.alumno.msg = 'Alumno procesado con exito';
+                    this.nuevoAlumno();
+                    this.obtenerDatos();
+                };
+                query.onerror=e=>{
+                    this.alumno.msg = 'Error al procesar el alumno';
+                };
             },
             guardarAlumno(){
                 let metodo = 'PUT',
@@ -139,18 +155,9 @@
                     metodo = 'POST';
                     url = 'alumnos';
                 }
-                this.sincronizarDatosServidor(this.alumno, metodo, url);
-
-                let store = this.abrirStore('alumnos','readwrite'),
-                    query = store.put(this.alumno);
-                query.onsuccess=e=>{
-                    this.alumno.msg = 'Alumno procesado con exito';
-                    this.nuevoAlumno();
-                    this.obtenerDatos();
-                };
-                query.onerror=e=>{
-                    this.alumno.msg = 'Error al procesar el alumno';
-                };
+                let alumno = JSON.parse( JSON.stringify(this.alumno) );
+                this.sincronizarDatosServidor(alumno, metodo, url);
+                this.actualizarLocal(alumno);
             },
             modificarAlumno(data){
                 this.alumno = JSON.parse(JSON.stringify(data));

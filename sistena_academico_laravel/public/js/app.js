@@ -2066,6 +2066,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   url: url,
                   data: alumno
                 }).then(function (res) {
+                  if (alumno.accion == 'nuevo') {
+                    alumno.id = res.data.id;
+
+                    _this.actualizarLocal(alumno);
+                  }
+
                   _this.alumno.msg = 'Alumno sincronizado con exito en el servidor';
                 })["catch"](function (err) {
                   _this.alumno.msg = "Error al sincronizar el alumno en el servidor: ".concat(err);
@@ -2079,21 +2085,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
-    guardarAlumno: function guardarAlumno() {
+    actualizarLocal: function actualizarLocal(alumno) {
       var _this2 = this;
 
-      var metodo = 'PUT',
-          url = "alumnos/".concat(this.alumno.id);
-
-      if (this.alumno.accion == 'nuevo') {
-        this.alumno.idAlumno = idUnicoFecha();
-        metodo = 'POST';
-        url = 'alumnos';
-      }
-
-      this.sincronizarDatosServidor(this.alumno, metodo, url);
       var store = this.abrirStore('alumnos', 'readwrite'),
-          query = store.put(this.alumno);
+          query = store.put(alumno);
 
       query.onsuccess = function (e) {
         _this2.alumno.msg = 'Alumno procesado con exito';
@@ -2106,6 +2102,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       query.onerror = function (e) {
         _this2.alumno.msg = 'Error al procesar el alumno';
       };
+    },
+    guardarAlumno: function guardarAlumno() {
+      var metodo = 'PUT',
+          url = "alumnos/".concat(this.alumno.id);
+
+      if (this.alumno.accion == 'nuevo') {
+        this.alumno.idAlumno = idUnicoFecha();
+        metodo = 'POST';
+        url = 'alumnos';
+      }
+
+      var alumno = JSON.parse(JSON.stringify(this.alumno));
+      this.sincronizarDatosServidor(alumno, metodo, url);
+      this.actualizarLocal(alumno);
     },
     modificarAlumno: function modificarAlumno(data) {
       this.alumno = JSON.parse(JSON.stringify(data));
