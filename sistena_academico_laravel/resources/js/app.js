@@ -23,6 +23,7 @@ window.idUnicoFecha = ()=>{
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('alumno-component', require('./components/AlumnoComponent.vue').default);
+Vue.component('docente-component', require('./components/DocenteComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -56,8 +57,8 @@ const app = new Vue({
                 let db = e.target.result,
                 tblalumnos = db.createObjectStore('alumnos',{ keyPath: 'idAlumno' }),
                 tblmaterias = db.createObjectStore('materias',{ keyPath: 'idMateria' }),
-                tbldocente = db.createObjectStore('docente',{ keyPath: 'idDocente' }),
-                tblmatricula = db.createObjectStore('matricula',{ keyPath: 'idMatricula' });
+                tbldocente = db.createObjectStore('docentes',{ keyPath: 'idDocente' }),
+                tblmatricula = db.createObjectStore('matriculas',{ keyPath: 'idMatricula' });
 
                 tblalumnos.createIndex('idAlumno','idAlumno',{ unique: true });
                 tblalumnos.createIndex('codigo','codigo',{ unique: false });

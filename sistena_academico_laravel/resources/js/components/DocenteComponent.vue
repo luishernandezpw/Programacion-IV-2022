@@ -1,48 +1,56 @@
 <template>
-    <div id='appAlumno'>
+    <div id='appDocente'>
         <div class="row">
             <div class="col col-md-4">
-                <form @submit.prevent="guardarAlumno" @reset.prevent="nuevoAlumno" method="post" id="frmAlumno">
+                <form @submit.prevent="guardarDocente" @reset.prevent="nuevoDocente" method="post" id="frmDocente">
                     <div class="card mb-3">
                         <div class="card-header text-white bg-dark">
-                            Administracion de Alumnos
+                            Administracion de Docentes
                             <button type="button" class="btn-close bg-white" data-bs-dismiss="alert" @click="cerrarForm" aria-label="Close"></button>
                         </div>
                         <div class="card-body">
                             <div class="row p-1">
                                 <div class="col col-md-3">Codigo</div>
                                 <div class="col col-md-3">
-                                    <input v-model="alumno.codigo" placeholder="codigo" pattern="[A-Z0-9]{3,10}" required title="Codigo de alumno" class="form-control" type="text">
+                                    <input v-model="docente.codigo" placeholder="codigo" pattern="[A-Z0-9]{3,10}" required title="Codigo de docente" class="form-control" type="text">
                                 </div>
                             </div>
                             <div class="row p-1">
                                 <div class="col col-md-3">Nombre</div>
                                 <div class="col">
-                                    <input v-model="alumno.nombre" placeholder="escribe tu nombre" pattern="[A-Za-zÑñáéíóú ]{3,75}" required title="Nombre de alumno" class="form-control" type="text">
+                                    <input v-model="docente.nombre" placeholder="escribe tu nombre" pattern="[A-Za-zÑñáéíóú ]{3,75}" required title="Nombre de docente" class="form-control" type="text">
                                 </div>
                             </div>
                             <div class="row p-1">
                                 <div class="col col-md-3">Direccion</div>
                                 <div class="col">
-                                    <input v-model="alumno.direccion" placeholder="donde vives" pattern="[A-Za-z0-9Ññáéíóú ]{3,100}" required title="Direccion de alumno" class="form-control" type="text">
+                                    <input v-model="docente.direccion" placeholder="donde vives" pattern="[A-Za-z0-9Ññáéíóú ]{3,100}" required title="Direccion de docente" class="form-control" type="text">
                                 </div>
                             </div>
                             <div class="row p-1">
                                 <div class="col col-md-3">Telefono</div>
                                 <div class="col col-md-4">
-                                    <input v-model="alumno.telefono" placeholder="tu tel" pattern="[0-9]{4}-[0-9]{4}" required title="Telefono de alumno" class="form-control" type="text">
+                                    <input v-model="docente.telefono" placeholder="tu tel" pattern="[0-9]{4}-[0-9]{4}" required title="Telefono de docente" class="form-control" type="text">
                                 </div>
                             </div>
                             <div class="row p-1">
                                 <div class="col col-md-3">DUI</div>
                                 <div class="col">
-                                    <input v-model="alumno.dui" placeholder="tu DUI" pattern="[0-9]{8}-[0-9]{1}" required title="DUI de alumno" class="form-control" type="text">
+                                    <input v-model="docente.dui" placeholder="tu DUI" pattern="[0-9]{8}-[0-9]{1}" required title="DUI de docente" class="form-control" type="text">
+                                </div>
+                            </div>
+                             <div class="row p-1">
+                                <div class="col col-md-3">ESCALAFON</div>
+                                <div class="col">
+                                    <select v-model="docente.idEscalafon" class="form-control" title="Seleccione su escalafon" alt="Seleccione su escalafon">
+                                        <option v-for="escalafon in escalafones" :value="escalafon.idEscalafon" :key="escalafon.idEscalafon">{{escalafon.nombre}}</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col text-center">
                                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                        {{ alumno.msg }}
+                                        {{ docente.msg }}
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                 </div>
@@ -58,17 +66,17 @@
                 </form>
             </div>
             <div class="col col-md-8">
-                <div class="card mb-3" id="cardBuscarAlumno">
+                <div class="card mb-3" id="cardBuscarDocente">
                     <div class="card-header text-white bg-dark">
-                        Busqueda de Alumnos
-                        <button @click="cerrarForm" type="button" class="btn-close bg-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarAlumno" aria-label="Close"></button>
+                        Busqueda de Docentes
+                        <button @click="cerrarForm" type="button" class="btn-close bg-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarDocente" aria-label="Close"></button>
                     </div>
                     <div class="card-body">
                         <table class="table">
                             <thead>
                                 <tr>
                                     <td colspan="6">
-                                        Buscar: <input title="Introduzca el texto a buscar" @keyup="buscarAlumno" v-model="buscar" class="form-control" type="text">
+                                        Buscar: <input title="Introduzca el texto a buscar" @keyup="buscarDocente" v-model="buscar" class="form-control" type="text">
                                     </td>
                                 </tr>
                                 <tr>
@@ -81,14 +89,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="item in alumnos" :key="item.idAlumno" @click="modificarAlumno(item)">
+                                <tr v-for="item in docentes" :key="item.idDocente" @click="modificarDocente(item)">
                                     <td>{{item.codigo}}</td>
                                     <td>{{item.nombre}}</td>
                                     <td>{{item.direccion}}</td>
                                     <td>{{item.telefono}}</td>
                                     <td>{{item.dui}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-danger" @click="eliminarAlumno(item)">Eliminar</button>
+                                        <button type="button" class="btn btn-danger" @click="eliminarDocente(item)">Eliminar</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -105,133 +113,140 @@
         props:['form'],
         data:()=>{
             return {
-                alumnos: [],
+                docentes: [],
+                escalafones: [
+                    {idEscalafon: 1, nombre: 'Profesor'},
+                    {idEscalafon: 2, nombre: 'Licenciado/Ingeniero'},
+                    {idEscalafon: 3, nombre: 'Maestria'},
+                    {idEscalafon: 4, nombre: 'Doctorado'},
+                ],
                 buscar: '',
-                alumno: {
+                docente: {
                     accion: 'nuevo',
                     msg : '',
                     id : 0,
-                    idAlumno: '',
+                    idDocente: '',
                     codigo: '',
                     nombre: '',
                     direccion: '',
                     telefono: '',
-                    dui: ''
+                    dui: '',
+                    idEscalafon: 0,
                 }
             }
         },
         methods: {
             cerrarForm(){
-                this.form['alumno'].mostrar = false;
+                this.form['docente'].mostrar = false;
             },
-            buscarAlumno(){
+            buscarDocente(){
                 this.obtenerDatos(this.buscar);
             },
-            async sincronizarDatosServidor(alumno='', metodo='POST', url='alumnos'){
+            async sincronizarDatosServidor(docente='', metodo='POST', url='docentes'){
                 await axios({
                     method: metodo,
                     url,
-                    data: alumno,
+                    data: docente,
                 })
                 .then(res=>{
-                    if( alumno.accion=='nuevo' ){
-                        alumno.id = res.data.id;
-                        this.actualizarLocal(alumno);
+                    if( docente.accion=='nuevo' ){
+                        docente.id = res.data.id;
+                        this.actualizarLocal(docente);
                     }
-                    this.alumno.msg = 'Alumno sincronizado con exito en el servidor';
+                    this.docente.msg = 'Docente sincronizado con exito en el servidor';
                 })
                 .catch(err=>{
-                    this.alumno.msg = `Error al sincronizar el alumno en el servidor: ${err}`
+                    this.docente.msg = `Error al sincronizar el docente en el servidor: ${err}`
                 });
             },
-            actualizarLocal(alumno){
-                let store = this.abrirStore('alumnos','readwrite'),
-                    query = store.put(alumno);
+            actualizarLocal(docente){
+                let store = this.abrirStore('docentes','readwrite'),
+                    query = store.put(docente);
                 query.onsuccess=e=>{
-                    this.alumno.msg = 'Alumno procesado con exito';
-                    this.nuevoAlumno();
+                    this.docente.msg = 'Docente procesado con exito';
+                    this.nuevoDocente();
                     this.obtenerDatos();
                 };
                 query.onerror=e=>{
-                    this.alumno.msg = 'Error al procesar el alumno';
+                    this.docente.msg = 'Error al procesar el docente';
                 };
             },
-            guardarAlumno(){
+            guardarDocente(){
                 let metodo = 'PUT',
-                    url = `alumnos/${this.alumno.id}`;
-                if( this.alumno.accion == 'nuevo' ){
-                    this.alumno.idAlumno = idUnicoFecha();
+                    url = `docentes/${this.docente.id}`;
+                if( this.docente.accion == 'nuevo' ){
+                    this.docente.idDocente = idUnicoFecha();
                     metodo = 'POST';
-                    url = 'alumnos';
+                    url = 'docentes';
                 }
-                let alumno = JSON.parse( JSON.stringify(this.alumno) );
-                this.sincronizarDatosServidor(alumno, metodo, url);
-                this.actualizarLocal(alumno);
+                let docente = JSON.parse( JSON.stringify(this.docente) );
+                this.sincronizarDatosServidor(docente, metodo, url);
+                this.actualizarLocal(docente);
             },
-            modificarAlumno(data){
-                this.alumno = JSON.parse(JSON.stringify(data));
-                this.alumno.accion = 'modificar';
+            modificarDocente(data){
+                this.docente = JSON.parse(JSON.stringify(data));
+                this.docente.accion = 'modificar';
             },
-            eliminarAlumno(data){
-                if( confirm(`¿Esta seguro de eliminar el alumno ${data.nombre}?`) ){
-                    let store = this.abrirStore('alumnos','readwrite'),
-                        query = store.delete(data.idAlumno),
+            eliminarDocente(data){
+                if( confirm(`¿Esta seguro de eliminar el docente ${data.nombre}?`) ){
+                    let store = this.abrirStore('docentes','readwrite'),
+                        query = store.delete(data.idDocente),
                         metodo = 'DELETE',
-                        url = `alumnos/${data.id}`;
+                        url = `docentes/${data.id}`;
                     this.sincronizarDatosServidor(data, metodo, url);    
                     query.onsuccess=e=>{
                         data.accion = 'eliminar';
-                        this.alumno.msg = 'Alumno eliminado con exito';
-                        this.nuevoAlumno();
+                        this.docente.msg = 'Docente eliminado con exito';
+                        this.nuevoDocente();
                         this.obtenerDatos();
                     };
                     query.onerror=e=>{
-                        this.alumno.msg = `Error al procesar el alumno ${e.target.error}`;
+                        this.docente.msg = `Error al procesar el docente ${e.target.error}`;
                     };
                 }
             },
             obtenerDatos(busqueda=''){
-                let store = this.abrirStore('alumnos', 'readonly'),
+                let store = this.abrirStore('docentes', 'readonly'),
                     data = store.getAll();
                 data.onsuccess = resp=>{
                     if( data.result.length<=0 ){
-                        fetch(`alumnos`,
+                        fetch(`docentes`,
                             {credentials:'same-origin'})
                             .then(res=>res.json())
                             .then(data=>{
-                                this.alumnos = data;
-                                this.alumno.msg = 'Alumnos obtenidos con exito';
+                                this.docentes = data;
+                                this.docente.msg = 'Docentes obtenidos con exito';
 
-                                data.map(alumno=>{
-                                    let store = this.abrirStore('alumnos','readwrite'),
-                                        query = store.put(alumno);
+                                data.map(docente=>{
+                                    let store = this.abrirStore('docentes','readwrite'),
+                                        query = store.put(docente);
                                     query.onsuccess=e=>{
-                                        this.alumno.msg = 'Alumnos guardados en local';
+                                        this.docente.msg = 'Docentes guardados en local';
                                     };
                                     query.onerror=e=>{
-                                        this.alumno.msg = `Error al obtener alumnos ${e.target.error}`;
+                                        this.docente.msg = `Error al obtener docentes ${e.target.error}`;
                                     };
                                 });
                             })
                             .catch(err=>{
-                                this.alumno.msg = `Error al sincronizar el alumno en el servidor: ${err}`
+                                this.docente.msg = `Error al sincronizar el docente en el servidor: ${err}`
                             });
                     }
-                    this.alumnos = data.result.filter(alumno=>alumno.nombre.toLowerCase().indexOf(busqueda.toLowerCase())>-1);
+                    this.docentes = data.result.filter(docente=>docente.nombre.toLowerCase().indexOf(busqueda.toLowerCase())>-1);
                 };
                 data.onerror = e=>{
-                    this.alumno.msg = `Error al obtener los datos ${e.target.error}`;
+                    this.docente.msg = `Error al obtener los datos ${e.target.error}`;
                 };
             },
-            nuevoAlumno(){
-                this.alumno.accion = 'nuevo';
-                this.alumno.idAlumno = '';
-                this.alumno.codigo = '';
-                this.alumno.nombre = '';
-                this.alumno.direccion = '';
-                this.alumno.telefono = '';
-                this.alumno.dui = '';
-                this.alumno.msg = '';
+            nuevoDocente(){
+                this.docente.accion = 'nuevo';
+                this.docente.idDocente = '';
+                this.docente.codigo = '';
+                this.docente.nombre = '';
+                this.docente.direccion = '';
+                this.docente.telefono = '';
+                this.docente.dui = '';
+                this.docente.msg = '';
             },
             abrirStore(store, modo){
                 let tx = db.transaction(store, modo);

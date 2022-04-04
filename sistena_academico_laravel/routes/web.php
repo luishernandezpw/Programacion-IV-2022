@@ -16,7 +16,7 @@ Auth::routes();
 
 Route::apiResources([
     'alumnos' => Alumnos::class,
-    'docentes' => 'DocenteController',
+    'docentes' => Docentes::class,
     'materias' => 'MateriaController',
     'matriculas' => 'MatriculaController',
     'inscripciones' => 'InscripcionController',
