@@ -18,11 +18,13 @@ Route::apiResources([
     'alumnos' => Alumnos::class,
     'docentes' => Docentes::class,
     'materias' => 'MateriaController',
-    'matriculas' => 'MatriculaController',
+    'matricula' => 'MatriculaController',
     'inscripciones' => 'InscripcionController',
     'notas' => 'NotaController',
 ]);
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware('auth');
+
+//Route::get('/home', 'HomeController@index')->name('home');

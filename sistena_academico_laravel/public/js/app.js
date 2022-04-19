@@ -2034,6 +2034,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 Vue.component('vue-resizable', VueResizable["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['form'],
@@ -39165,7 +39166,7 @@ var render = function () {
                               _vm._v(
                                 "\n                                        " +
                                   _vm._s(_vm.alumno.msg) +
-                                  "\n                                        "
+                                  "\n                                        \n                                        "
                               ),
                               _c("button", {
                                 staticClass: "btn-close",
