@@ -21,4 +21,4 @@ Route::apiResources([
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware('auth');
