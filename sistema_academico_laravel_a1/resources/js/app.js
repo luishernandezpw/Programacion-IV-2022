@@ -12,6 +12,8 @@ window.generarIdUnicoFecha = ()=>{
     let fecha = new Date();
     return Math.floor(fecha.getTime()/1000).toString(16);
 }
+import vSelect from 'vue-select';
+import 'vue-select/dist/vue-select.css';
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -25,6 +27,8 @@ window.generarIdUnicoFecha = ()=>{
 
 Vue.component('alumno-component', require('./components/AlumnoComponent.vue').default);
 Vue.component('docente-component', require('./components/DocenteComponent.vue').default);
+Vue.component('matricula-component', require('./components/MatriculaComponent.vue').default);
+Vue.component('v-select-alumno', vSelect);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
