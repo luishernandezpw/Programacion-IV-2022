@@ -6,6 +6,9 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+import vSelect from 'vue-select';
+import 'vue-select/dist/vue-select.css';
+
 window.db = '';
 window.idUnicoFecha = ()=>{
     let fecha = new Date();
@@ -25,6 +28,8 @@ window.idUnicoFecha = ()=>{
 
 Vue.component('alumno-component', require('./components/AlumnoComponent.vue').default);
 Vue.component('docente-component', require('./components/DocenteComponent.vue').default);
+Vue.component('matricula-component', require('./components/MatriculaComponent.vue').default);
+Vue.component('v-select-alumno', vSelect);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -39,6 +44,7 @@ const app = new Vue({
             alumno:{mostrar:false},
             materia:{mostrar:false},
             docente:{mostrar:false},
+            matricula:{mostrar:false},
         }
     },
     methods:{

@@ -2,7 +2,7 @@
     <div id='appDocente'>
         <div class="row">
             <div class="col col-md-4">
-                <vue-resizable :width="500" :drag-selector="toolbar">
+                <!--<vue-resizable :width="500" :drag-selector="toolbar">-->
                     <form class="toolbar" @submit.prevent="guardarDocente" @reset.prevent="nuevoDocente" method="post" id="frmDocente">
                         <div class="card mb-3">
                             <div class="card-header text-white bg-dark">
@@ -65,10 +65,10 @@
                             </div>
                         </div>
                     </form>
-                </vue-resizable>
+                <!-- </vue-resizable> -->
             </div>
             <div class="col col-md-8">
-                <vue-resizable :width="600" :drag-selector="toolbar">
+                <!-- <vue-resizable :width="600" :drag-selector="toolbar"> -->
                     <div class="card mb-3 toolbar" id="cardBuscarDocente">
                         <div class="card-header text-white bg-dark">
                             Busqueda de Docentes
@@ -106,14 +106,14 @@
                             </table>
                         </div>
                     </div>
-                </vue-resizable>
+                <!-- </vue-resizable> -->
             </div>
         </div>
     </div> 
 </template>
 
 <script>
-    Vue.component('vue-resizable',VueResizable.default);
+    //Vue.component('vue-resizable',VueResizable.default);
     export default {
         props:['form'],
         data:()=>{

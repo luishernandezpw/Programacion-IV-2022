@@ -78,6 +78,7 @@
             </nav>
             <alumno-component v-bind:form="forms" ref="alumno" v-show="forms['alumno'].mostrar"></alumno-component>
             <docente-component v-bind:form="forms" ref="docente" v-show="forms['docente'].mostrar"></docente-component>
+            <matricula-component v-bind:form="forms" ref="matricula" v-show="forms['matricula'].mostrar"></matricula-component>
         </div>
         <script src="https://unpkg.com/vue-resizable@1"></script>
         <script src="{{ asset('js/app.js') }}"></script>

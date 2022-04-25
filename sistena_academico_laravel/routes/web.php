@@ -18,7 +18,7 @@ Route::apiResources([
     'alumnos' => Alumnos::class,
     'docentes' => Docentes::class,
     'materias' => 'MateriaController',
-    'matricula' => 'MatriculaController',
+    'matriculas' => Matriculas::class,
     'inscripciones' => 'InscripcionController',
     'notas' => 'NotaController',
 ]);

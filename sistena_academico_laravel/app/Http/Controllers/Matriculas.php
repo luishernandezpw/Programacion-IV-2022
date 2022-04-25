@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Matricula;
 use Illuminate\Http\Request;
 
-class Matricula extends Controller
+class Matriculas extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,8 +35,13 @@ class Matricula extends Controller
      */
     public function store(Request $request)
     {
-        $id = Matricula::create($request->all())->id;
-        return response()->json(['id' => $id], 200);
+        $matricula = Matricula::create();
+        $matricula->idMatricula = $request->idMatricula;
+        $matricula->idAlumno = $request->alumno['id'];
+        $matricula->fecha = $request->fecha;
+        $matricula->ciclo = $request->ciclo;
+        $matricula->save();
+        return response()->json(['id' => $matricula->id], 200);
     }
 
     /**
@@ -70,7 +75,12 @@ class Matricula extends Controller
      */
     public function update(Request $request, matricula $matricula)
     {
-        $matricula->update($request->all());
+        //$matricula->update($request->all());
+        $matricula->idMatricula = $request->idMatricula;
+        $matricula->idAlumno = $request->alumno['id'];
+        $matricula->fecha = $request->fecha;
+        $matricula->ciclo = $request->ciclo;
+        $matricula->save();
         return response()->json(['id' => $request->id], 200);
     }
 
