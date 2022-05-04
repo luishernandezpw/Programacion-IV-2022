@@ -63,10 +63,10 @@ const app = new Vue({
             let indexDb = indexedDB.open('db_sistema', 1);
             indexDb.onupgradeneeded = e=>{
                 let db = e.target.result;
-                tblalumno = db.createObjectStore('alumno', {keyPath:'idAlumno'});
-                tblmateria = db.createObjectStore('materia', {keyPath:'idMateria'});
-                tbldocente = db.createObjectStore('docente', {keyPath:'idDocente'});
-                tblmatricula = db.createObjectStore('matricula', {keyPath:'idMatricula'});
+                let tblalumno = db.createObjectStore('alumno', {keyPath:'idAlumno'});
+                let tblmateria = db.createObjectStore('materia', {keyPath:'idMateria'});
+                let tbldocente = db.createObjectStore('docente', {keyPath:'idDocente'});
+                let tblmatricula = db.createObjectStore('matricula', {keyPath:'idMatricula'});
 
                 tblalumno.createIndex('idAlumno', 'idAlumno', {unique:true});
                 tblalumno.createIndex('codigo', 'codigo', {unique:false});

@@ -5,8 +5,12 @@
                 <!--<vue-resizable :fit-parent="fit" :dragSelector="selector" :width="500">-->
                 <div class="card text-white" id="carMatricula">
                     <div class="card-header bg-primary">
-                        Registro de Matriculas
-                        <button type="button" class="btn-close text-end" @click="cerrarForm"></button>
+                        <div class="card-title position-absolute">Registro de Matricula</div>
+                        <div class="d-flex flex-row-reverse">
+                            <div>
+                                <button type="button" class="btn-close text-end" @click="cerrarForm"></button>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body text-dark">
                         <form method="post" @submit.prevent="guardarMatricula" @reset="nuevoMatricula">
@@ -25,14 +29,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row p-1">
-                                <div class="col text-center">
-                                    <div v-if="matricula.mostrar_msg" class="alert alert-primary alert-dismissible fade show" role="alert">
-                                        {{ matricula.msg }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="row m-2">
                                 <div class="col text-center">
                                     <input class="btn btn-success" type="submit" value="Guardar">
@@ -48,8 +44,12 @@
                 <!--<vue-resizable :dragSelector="selector" :width="600">-->
                 <div class="card text-white" id="carBuscarMatricula">
                     <div class="card-header bg-primary">
-                        Busqueda de Matriculas
-                        <button type="button" @click="cerrarForm" class="btn-close" data-bs-dismiss="alert" data-bs-target="#carBuscarMatricula" aria-label="Close"></button>
+                        <div class="position-absolute">Busqueda de Matriculas</div>
+                        <div class="d-flex flex-row-reverse">
+                            <div>
+                                <button type="button" @click="cerrarForm" class="btn-close" data-bs-dismiss="alert" data-bs-target="#carBuscarMatricula" aria-label="Close"></button>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <table class="table table-dark table-hover">
@@ -68,7 +68,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="item in matriculas" @click='modificarMatricula( item )' :key="item.idMatricula">
-                                    <td>{{item.alumno}}</td>
+                                    <td>{{item.alumno.label}}</td>
                                     <td>{{item.ciclo}}</td>
                                     <td>{{item.fecha}}</td>
                                     <td>
@@ -98,8 +98,6 @@
                 alumnos : [],
                 matricula:{
                     accion : 'nuevo',
-                    mostrar_msg : false,
-                    msg : '',
                     id : 0,
                     idMatricula : '',
                     alumno : {
@@ -125,10 +123,10 @@
                         matricula.id = resp.data.id;
                         this.insertarLocal(matricula);//actualizar el id del matricula que se genero en el servidor con laravel y mysql
                     }
-                    this.matricula.msg = `Matricula procesado ${data.msg}`;
+                    alertify.success(`Matricula procesado ${data.msg}`);
                 })
                 .catch(err=>{
-                    this.matricula.msg = `Error al procesar el matricula ${err}`;
+                    alerttify.error(`Error al procesar el matricula ${err}`);
                 })
             },
             insertarLocal(matricula){
@@ -137,17 +135,17 @@
                 query.onsuccess = e=>{
                     this.nuevoMatricula();
                     this.obtenerDatos();
-                    this.matricula.msg = 'Matricula procesado con exito';
+                    alertify.success('Matricula procesado con exito');
                 };
                 query.onerror = e=>{
-                    this.matricula.msg = `Error al procesar el matricula ${e.target.error}`;
+                    alertify.error(`Error al procesar el matricula ${e.target.error}`);
                 };
             },
             buscandoMatricula(){
                 this.obtenerDatos(this.buscar);
             },
             eliminarMatricula(matricula){
-                if( confirm(`Esta seguro de eliminar el matricula ${matricula.nombre}?`) ){
+                alertify.confirm('Eliminar Matriculas', `Esta seguro de eliminar la matricula del alumno ${matricula.alumno.label}?`, eok=>{
                     matricula.accion = 'eliminar';
                     let store = this.abrirStore('matricula', 'readwrite'),
                         query = store.delete(matricula.idMatricula),
@@ -157,12 +155,14 @@
                     query.onsuccess = e=>{
                         this.nuevoMatricula();
                         this.obtenerDatos();
-                        this.matricula.msg = 'Matricula eliminado con exito';
+                        alertify.success('Matricula eliminado con exito');
                     };
                     query.onerror = e=>{
-                        this.matricula.msg = `Error al eliminar el matricula ${e.target.error}`;
+                        alertify.error(`Error al eliminar el matricula ${e.target.error}`);
                     };
-                }
+                }, ecancel=>{
+                    alertify.message("Elimacion cancelada");
+                })
                 this.nuevoMatricula();
             },
             modificarMatricula(datos){
@@ -203,13 +203,13 @@
                                 });
                             })
                             .catch(err=>{
-                                this.matricula.msg = `Error al guardar el matricula ${err}`;
+                                alertify.error(`Error al guardar el matricula ${err}`);
                             });
                     }
-                    this.matriculas = data.result.filter(matricula=>matricula.nombre.toLowerCase().indexOf(valor.toLowerCase())>-1);
+                    this.matriculas = data.result.filter(matricula=>matricula.alumno.label.toLowerCase().indexOf(valor.toLowerCase())>-1);
                 };
                 data.onerror = e=>{
-                    this.matricula.msg = `Error al obtener los matriculas ${e.target.error}`;
+                    alertify.error(`Error al obtener los matriculas ${e.target.error}`);
                 };
                 //obtener alumnos 
                 let storeAlumno = this.abrirStore('alumno', 'readonly'),
@@ -233,7 +233,7 @@
                                 });
                             })
                             .catch(err=>{
-                                this.alumno.msg = `Error al guardar el alumno ${err}`;
+                                alertify.error(`Error al guardar el alumno ${err}`);
                             });
                     }
                     this.alumnos = dataAlumno.result.map(alumno=>{
@@ -245,12 +245,11 @@
                     console.log(this.alumnos);
                 };
                 dataAlumno.onerror = e=>{
-                    this.alumno.msg = `Error al obtener los alumnos ${e.target.error}`;
+                    alertify.error(`Error al obtener los alumnos ${e.target.error}`);
                 };
             },
             nuevoMatricula(){
                 this.matricula.accion = 'nuevo';
-                this.matricula.msg = '';
                 this.matricula.idMatricula = '';
                 this.matricula.alumno = {
                     id:'',

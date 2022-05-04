@@ -39,8 +39,14 @@ class Matriculas extends Controller
      */
     public function store(Request $request)
     {
-        $id = Matricula::create($request->all())->id; //
-        return response()->json(['id'=>$id], 200);
+        //$id = Matricula::create($request->all())->id; //
+        $matricula = Matricula::create(); //crea un registro vacio en la tabla matriculas
+        $matricula->idMatricula = $request->idMatricula;
+        $matricula->idAlumno = $request->alumno['id'];
+        $matricula->ciclo = $request->ciclo;
+        $matricula->save(); //guarda el registro
+
+        return response()->json(['id'=>$matricula->id], 200);
     }
 
     /**
@@ -74,7 +80,11 @@ class Matriculas extends Controller
      */
     public function update(Request $request, Matricula $matricula)
     {
-        $matricula->update($request->all());
+        //$matricula->update($request->all());
+        $matricula->idMatricula = $request->idMatricula;
+        $matricula->idAlumno = $request->alumno['id'];
+        $matricula->ciclo = $request->ciclo;
+        $matricula->save(); //guarda el registro
         return response()->json(['id'=>$request->id], 200);
     }
 

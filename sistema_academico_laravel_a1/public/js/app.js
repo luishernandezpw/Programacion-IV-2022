@@ -2663,8 +2663,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       alumnos: [],
       matricula: {
         accion: 'nuevo',
-        mostrar_msg: false,
-        msg: '',
         id: 0,
         idMatricula: '',
         alumno: {
@@ -2700,9 +2698,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                   }
 
-                  _this.matricula.msg = "Matricula procesado ".concat(data.msg);
+                  alertify.success("Matricula procesado ".concat(data.msg));
                 })["catch"](function (err) {
-                  _this.matricula.msg = "Error al procesar el matricula ".concat(err);
+                  alerttify.error("Error al procesar el matricula ".concat(err));
                 });
 
               case 2:
@@ -2724,11 +2722,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
         _this2.obtenerDatos();
 
-        _this2.matricula.msg = 'Matricula procesado con exito';
+        alertify.success('Matricula procesado con exito');
       };
 
       query.onerror = function (e) {
-        _this2.matricula.msg = "Error al procesar el matricula ".concat(e.target.error);
+        alertify.error("Error al procesar el matricula ".concat(e.target.error));
       };
     },
     buscandoMatricula: function buscandoMatricula() {
@@ -2737,27 +2735,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     eliminarMatricula: function eliminarMatricula(matricula) {
       var _this3 = this;
 
-      if (confirm("Esta seguro de eliminar el matricula ".concat(matricula.nombre, "?"))) {
+      alertify.confirm('Eliminar Matriculas', "Esta seguro de eliminar la matricula del alumno ".concat(matricula.alumno.label, "?"), function (eok) {
         matricula.accion = 'eliminar';
-        var store = this.abrirStore('matricula', 'readwrite'),
+
+        var store = _this3.abrirStore('matricula', 'readwrite'),
             query = store["delete"](matricula.idMatricula),
             metodo = 'DELETE',
             url = "/matricula/".concat(matricula.id);
-        this.sincronizarDatosServidor(matricula, metodo, url);
+
+        _this3.sincronizarDatosServidor(matricula, metodo, url);
 
         query.onsuccess = function (e) {
           _this3.nuevoMatricula();
 
           _this3.obtenerDatos();
 
-          _this3.matricula.msg = 'Matricula eliminado con exito';
+          alertify.success('Matricula eliminado con exito');
         };
 
         query.onerror = function (e) {
-          _this3.matricula.msg = "Error al eliminar el matricula ".concat(e.target.error);
+          alertify.error("Error al eliminar el matricula ".concat(e.target.error));
         };
-      }
-
+      }, function (ecancel) {
+        alertify.message("Elimacion cancelada");
+      });
       this.nuevoMatricula();
     },
     modificarMatricula: function modificarMatricula(datos) {
@@ -2806,17 +2807,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               };
             });
           })["catch"](function (err) {
-            _this4.matricula.msg = "Error al guardar el matricula ".concat(err);
+            alertify.error("Error al guardar el matricula ".concat(err));
           });
         }
 
         _this4.matriculas = data.result.filter(function (matricula) {
-          return matricula.nombre.toLowerCase().indexOf(valor.toLowerCase()) > -1;
+          return matricula.alumno.label.toLowerCase().indexOf(valor.toLowerCase()) > -1;
         });
       };
 
       data.onerror = function (e) {
-        _this4.matricula.msg = "Error al obtener los matriculas ".concat(e.target.error);
+        alertify.error("Error al obtener los matriculas ".concat(e.target.error));
       }; //obtener alumnos 
 
 
@@ -2844,7 +2845,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               };
             });
           })["catch"](function (err) {
-            _this4.alumno.msg = "Error al guardar el alumno ".concat(err);
+            alertify.error("Error al guardar el alumno ".concat(err));
           });
         }
 
@@ -2858,12 +2859,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
 
       dataAlumno.onerror = function (e) {
-        _this4.alumno.msg = "Error al obtener los alumnos ".concat(e.target.error);
+        alertify.error("Error al obtener los alumnos ".concat(e.target.error));
       };
     },
     nuevoMatricula: function nuevoMatricula() {
       this.matricula.accion = 'nuevo';
-      this.matricula.msg = '';
       this.matricula.idMatricula = '';
       this.matricula.alumno = {
         id: '',
@@ -40744,14 +40744,19 @@ var render = function () {
           { staticClass: "card text-white", attrs: { id: "carMatricula" } },
           [
             _c("div", { staticClass: "card-header bg-primary" }, [
-              _vm._v(
-                "\n                    Registro de Matriculas\n                    "
-              ),
-              _c("button", {
-                staticClass: "btn-close text-end",
-                attrs: { type: "button" },
-                on: { click: _vm.cerrarForm },
-              }),
+              _c("div", { staticClass: "card-title position-absolute" }, [
+                _vm._v("Registro de Matricula"),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "d-flex flex-row-reverse" }, [
+                _c("div", [
+                  _c("button", {
+                    staticClass: "btn-close text-end",
+                    attrs: { type: "button" },
+                    on: { click: _vm.cerrarForm },
+                  }),
+                ]),
+              ]),
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "card-body text-dark" }, [
@@ -40849,36 +40854,6 @@ var render = function () {
                     ]),
                   ]),
                   _vm._v(" "),
-                  _c("div", { staticClass: "row p-1" }, [
-                    _c("div", { staticClass: "col text-center" }, [
-                      _vm.matricula.mostrar_msg
-                        ? _c(
-                            "div",
-                            {
-                              staticClass:
-                                "alert alert-primary alert-dismissible fade show",
-                              attrs: { role: "alert" },
-                            },
-                            [
-                              _vm._v(
-                                "\n                                    " +
-                                  _vm._s(_vm.matricula.msg) +
-                                  "\n                                    "
-                              ),
-                              _c("button", {
-                                staticClass: "btn-close",
-                                attrs: {
-                                  type: "button",
-                                  "data-bs-dismiss": "alert",
-                                  "aria-label": "Close",
-                                },
-                              }),
-                            ]
-                          )
-                        : _vm._e(),
-                    ]),
-                  ]),
-                  _vm._v(" "),
                   _vm._m(0),
                 ]
               ),
@@ -40896,19 +40871,24 @@ var render = function () {
           },
           [
             _c("div", { staticClass: "card-header bg-primary" }, [
-              _vm._v(
-                "\n                    Busqueda de Matriculas\n                    "
-              ),
-              _c("button", {
-                staticClass: "btn-close",
-                attrs: {
-                  type: "button",
-                  "data-bs-dismiss": "alert",
-                  "data-bs-target": "#carBuscarMatricula",
-                  "aria-label": "Close",
-                },
-                on: { click: _vm.cerrarForm },
-              }),
+              _c("div", { staticClass: "position-absolute" }, [
+                _vm._v("Busqueda de Matriculas"),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "d-flex flex-row-reverse" }, [
+                _c("div", [
+                  _c("button", {
+                    staticClass: "btn-close",
+                    attrs: {
+                      type: "button",
+                      "data-bs-dismiss": "alert",
+                      "data-bs-target": "#carBuscarMatricula",
+                      "aria-label": "Close",
+                    },
+                    on: { click: _vm.cerrarForm },
+                  }),
+                ]),
+              ]),
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "card-body" }, [
@@ -40959,7 +40939,7 @@ var render = function () {
                         },
                       },
                       [
-                        _c("td", [_vm._v(_vm._s(item.alumno))]),
+                        _c("td", [_vm._v(_vm._s(item.alumno.label))]),
                         _vm._v(" "),
                         _c("td", [_vm._v(_vm._s(item.ciclo))]),
                         _vm._v(" "),
@@ -53375,16 +53355,16 @@ var app = new Vue({
 
       indexDb.onupgradeneeded = function (e) {
         var db = e.target.result;
-        tblalumno = db.createObjectStore('alumno', {
+        var tblalumno = db.createObjectStore('alumno', {
           keyPath: 'idAlumno'
         });
-        tblmateria = db.createObjectStore('materia', {
+        var tblmateria = db.createObjectStore('materia', {
           keyPath: 'idMateria'
         });
-        tbldocente = db.createObjectStore('docente', {
+        var tbldocente = db.createObjectStore('docente', {
           keyPath: 'idDocente'
         });
-        tblmatricula = db.createObjectStore('matricula', {
+        var tblmatricula = db.createObjectStore('matricula', {
           keyPath: 'idMatricula'
         });
         tblalumno.createIndex('idAlumno', 'idAlumno', {
@@ -53610,15 +53590,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!********************************************************!*\
   !*** ./resources/js/components/MatriculaComponent.vue ***!
   \********************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MatriculaComponent_vue_vue_type_template_id_2356cf4a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MatriculaComponent.vue?vue&type=template&id=2356cf4a& */ "./resources/js/components/MatriculaComponent.vue?vue&type=template&id=2356cf4a&");
 /* harmony import */ var _MatriculaComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MatriculaComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/MatriculaComponent.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _MatriculaComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _MatriculaComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -53648,7 +53627,7 @@ component.options.__file = "resources/js/components/MatriculaComponent.vue"
 /*!*********************************************************************************!*\
   !*** ./resources/js/components/MatriculaComponent.vue?vue&type=script&lang=js& ***!
   \*********************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
