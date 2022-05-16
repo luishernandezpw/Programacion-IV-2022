@@ -11,10 +11,21 @@ http.listen(port, function() {
 
 var http = require('http').Server(),
     express = require('express'),
-    app = express();
+    app = express(),
+    mongodb = require('mongodb').MongoClient,
+    url = 'mongodb://localhost:27017',
+    dbName = 'chatDB';
 
+app.use(express.json());//para poder usar json
 app.get('/chat', function(req, res){
-    res.send('<h1>Prueba con express</h1>');
+    mongodb.connect(url, function(err, client){
+        if( err ) console.log('Error al conectarse a la BD', err);
+        const db = client.db(dbName);
+        db.collection('user').find({}).toArray(function(er, users){
+            res.send(users);
+        });
+
+    });
 });
 app.get('/juegos', function(req, res){
     res.send('<h1>Prueba con juegos</h1>');
