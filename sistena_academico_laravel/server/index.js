@@ -2,9 +2,15 @@ const port = 3001;
 
 var express = require('express'),
     app = express(),
+    http = require('http').Server(app),
     mongodb = require('mongodb').MongoClient,
     url = 'mongodb://localhost:27017',
-    dbName = 'chatDB';
+    dbName = 'chatDB',
+    socketio = require('socket.io')(http);
+
+socketio.on('connection', socket=>{
+    console.log('Hola mundo desde socket.io');
+});
 
 app.use(express.json());//para poder usar json
 app.get('/user', function(req, res){
@@ -34,6 +40,9 @@ app.get('/juegos', function(req, res){
     res.send('<h1>Prueba con juegos</h1>');
 });
 
-app.listen(port, function(){
-    console.log(`Server running at http://localhost:${port}/`);
+http.listen(port, function(){
+    console.log(`Servidor corriendo en el puerto ${port}`);
 });
+/*app.listen(port, function(){
+    console.log(`Server running at http://localhost:${port}/`);
+});*/
