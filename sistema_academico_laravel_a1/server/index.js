@@ -2,8 +2,14 @@ const express = require('express'),
     server = express(),
     mongodb = require('mongodb').MongoClient,
     url = 'mongodb://localhost:27017',
-    port = 3001;
+    port = 3001,
+    http = require('http').Server(server)
+    io = require('socket.io')(http);
 server.use(express.json());
+
+io.on('connection',function(socket){
+    console.log('Conectado via socket');
+});
 
 server.get('/chat', function(req, resp){
     resp.send('Hola Mundo');
@@ -33,6 +39,9 @@ server.post('/usuarios/save', function(req, resp){
     });
 });
 
-server.listen(port, function(event){
+/*server.listen(port, function(event){
     console.log('Server running on port 3001');
+});*/
+http.listen(port, function(e){
+    console.log(`Server corriendo en puerto ${port}`);
 });
