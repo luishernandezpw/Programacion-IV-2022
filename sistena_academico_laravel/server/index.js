@@ -1,3 +1,5 @@
+const { SocketAddress } = require('net');
+
 const port = 3001;
 
 var express = require('express'),
@@ -10,6 +12,28 @@ var express = require('express'),
 
 socketio.on('connection', socket=>{
     console.log('Hola mundo desde socket.io');
+
+    socket.on('historial', ()=>{
+        mongodb.connect(url, (err, client)=>{
+            if(err) console.log(err);
+            const db = client.db(dbName);
+            db.collection('chat').find().toArray((err, chats)=>{
+                if(err) console.log(err);
+                socket.emit('historial', chats); //Envia solo al socket que lo solicito. 1. Solo a mi (Quien lo solicito)
+            });
+        });
+    });
+    socket.on('chat', chat=>{
+        mongodb.connect(url,(err, client)=>{
+            if(err) console.log(err);
+            const db = client.db(dbName);
+            db.collection('chat').insertOne(chat).then(result=>{
+                socketio.emit('chat', chat); //Envia a todos los sockets conectados. 2. Todos los sockets conectados
+            }).catch(err=>{
+
+            });
+        });
+    });
 });
 
 app.use(express.json());//para poder usar json

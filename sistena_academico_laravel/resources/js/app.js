@@ -14,7 +14,25 @@ window.idUnicoFecha = ()=>{
     let fecha = new Date();
     return Math.floor(fecha.getTime()/1000).toString(16);
 }
+var socketio = io('http://localhost:3001');
+socketio.on('connect', function(e){
+    console.log('Conectado al servidor via socket.io');
+});
 
+//Notificaciones de Escritorio
+if(!Notification){
+    //alertify.error('Este navegador no soporta notificaciones');
+}
+window.permitirNotificaciones = "default";
+if(Notification.permission !== "denied"){
+    Notification.requestPermission(function(result){
+        console.log('Permitido: ', result);
+        permitirNotificaciones = result;
+    });
+}else{
+    permitirNotificaciones = "denied";
+    //alertify.error('EL usuario denego las Notificaciones');
+}
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

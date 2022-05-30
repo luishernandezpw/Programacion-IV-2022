@@ -40,6 +40,9 @@
                             <li class="nav-item">
                                 <a @click="abrirForm('nota')" class="nav-link" href="#">Notas</a>
                             </li>
+                            <li class="nav-item">
+                                <a @click="abrirForm('chat')" class="nav-link" href="#">Chat</a>
+                            </li>
                         </ul>
                         <!-- Right Side Of Navbar -->
                         <ul class="navbar-nav ml-auto">
