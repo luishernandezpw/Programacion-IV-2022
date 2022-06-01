@@ -56,6 +56,9 @@
                         <li class="nav-item">
                             <a @click="abrirForm('nota')" class="nav-link" href="#">Notas</a>
                         </li>
+                        <li class="nav-item">
+                            <a @click="abrirForm('chat')" class="nav-link" href="#">Chat</a>
+                        </li>
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -99,6 +102,7 @@
         <alumno v-bind:form="forms" ref="alumno" v-show="forms['alumno'].mostrar" ></alumno>
         <docente v-bind:form="forms" ref="docente" v-show="forms['docente'].mostrar" ></docente>
         <matricula v-bind:form="forms" ref="matricula" v-show="forms['matricula'].mostrar" ></matricula>
+        <chat v-bind:form="forms" ref="chat" v-show="forms['chat'].mostrar" ></chat>
     </div>
     <script src="https://unpkg.com/vue-resizable@1"></script>
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
