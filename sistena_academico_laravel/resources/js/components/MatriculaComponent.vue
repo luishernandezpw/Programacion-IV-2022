@@ -13,7 +13,7 @@
                                 <div class="row p-1">
                                     <div class="col col-md-3">Alumno</div>
                                     <div class="col">
-                                        <v-select-alumno v-model="matricula.alumno" :options="alumnos" label="nombre" placeholder="Seleccione un alumno"/>
+                                        <!-- <v-select-alumno v-model="matricula.alumno" :options="alumnos" label="nombre" placeholder="Seleccione un alumno"/> -->
                                     </div>
                                 </div>
                                 <div class="row p-1">

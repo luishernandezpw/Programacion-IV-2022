@@ -8,7 +8,13 @@ var express = require('express'),
     mongodb = require('mongodb').MongoClient,
     url = 'mongodb://localhost:27017',
     dbName = 'chatDB',
-    socketio = require('socket.io')(http);
+    socketio = require('socket.io')(http, {
+        allowEIO3: true,
+        cors:{
+            origin: ['http://localhost:8000'],
+            credentials : true
+        }
+    });
 
 socketio.on('connection', socket=>{
     console.log('Hola mundo desde socket.io');

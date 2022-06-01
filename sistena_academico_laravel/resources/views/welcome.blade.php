@@ -79,10 +79,12 @@
                     </div>
                 </div>
             </nav>
-            <alumno-component v-bind:form="forms" ref="alumno" v-show="forms['alumno'].mostrar"></alumno-component>
-            <docente-component v-bind:form="forms" ref="docente" v-show="forms['docente'].mostrar"></docente-component>
-            <matricula-component v-bind:form="forms" ref="matricula" v-show="forms['matricula'].mostrar"></matricula-component>
+            <alumno v-bind:form="forms" ref="alumno" v-show="forms['alumno'].mostrar"></alumno>
+            <docente v-bind:form="forms" ref="docente" v-show="forms['docente'].mostrar"></docente>
+            <matricula v-bind:form="forms" ref="matricula" v-show="forms['matricula'].mostrar"></matricula>
+            <chat v-bind:form="forms" ref="chat" v-show="forms['chat'].mostrar"></chat>
         </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
         <script src="https://unpkg.com/vue-resizable@1"></script>
         <script src="{{ asset('js/app.js') }}"></script>
     </body>

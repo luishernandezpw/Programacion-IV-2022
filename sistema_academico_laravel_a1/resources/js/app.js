@@ -6,7 +6,8 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
+//window.Vue = require('vue');
+import Vue from 'vue';
 window.db = '';
 window.generarIdUnicoFecha = ()=>{
     let fecha = new Date();
@@ -25,10 +26,13 @@ import 'vue-select/dist/vue-select.css';
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('alumno-component', require('./components/AlumnoComponent.vue').default);
+/*Vue.component('alumno-component', require('./components/AlumnoComponent.vue').default);
 Vue.component('docente-component', require('./components/DocenteComponent.vue').default);
 Vue.component('matricula-component', require('./components/MatriculaComponent.vue').default);
-Vue.component('v-select-alumno', vSelect);
+Vue.component('v-select-alumno', vSelect);*/
+import alumno from './components/AlumnoComponent.vue';
+import docente from './components/DocenteComponent.vue';
+import matricula from './components/MatriculaComponent.vue';
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -38,6 +42,11 @@ Vue.component('v-select-alumno', vSelect);
 
 const app = new Vue({
     el: '#app',
+    components:{
+        alumno,
+        docente,
+        matricula
+    },
     data:{
         forms:{
             alumno:{mostrar:false},

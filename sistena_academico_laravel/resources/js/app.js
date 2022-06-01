@@ -5,7 +5,8 @@
  */
 require('./bootstrap');
 
-window.Vue = require('vue');
+//window.Vue = require('vue');
+import Vue from 'vue';
 import vSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 
@@ -14,7 +15,7 @@ window.idUnicoFecha = ()=>{
     let fecha = new Date();
     return Math.floor(fecha.getTime()/1000).toString(16);
 }
-var socketio = io('http://localhost:3001');
+window.socketio = io('http://localhost:3001');
 socketio.on('connect', function(e){
     console.log('Conectado al servidor via socket.io');
 });
@@ -44,10 +45,16 @@ if(Notification.permission !== "denied"){
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('alumno-component', require('./components/AlumnoComponent.vue').default);
+/*Vue.component('alumno-component', require('./components/AlumnoComponent.vue').default);
 Vue.component('docente-component', require('./components/DocenteComponent.vue').default);
 Vue.component('matricula-component', require('./components/MatriculaComponent.vue').default);
-Vue.component('v-select-alumno', vSelect);
+Vue.component('v-select-alumno', vSelect);*/
+
+import alumno from './components/AlumnoComponent.vue';
+import docente from './components/DocenteComponent.vue';
+import matricula from './components/MatriculaComponent.vue';
+import chat from './components/ChatComponent.vue';
+//import vSelectAlumno from vSelect;
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -57,12 +64,19 @@ Vue.component('v-select-alumno', vSelect);
 
 const app = new Vue({
     el: '#app',
+    components: {
+        alumno,
+        docente,
+        matricula,
+        chat
+    },
     data:{
         forms:{
             alumno:{mostrar:false},
             materia:{mostrar:false},
             docente:{mostrar:false},
             matricula:{mostrar:false},
+            chat:{mostrar:false},
         }
     },
     methods:{

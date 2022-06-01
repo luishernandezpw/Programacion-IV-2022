@@ -4,28 +4,25 @@
             <div class="card mb-3">
                 <div class="card-header text-white bg-dark">
                     <div class="row">
-                        <div class="col-1">
-                            <img src="../../../public/img/chat.png" alt="Imagen de Chat" title="Chat de usuarios">
+                        <div class="col-1 col-md-1">
+                            <img width="30" height="20" :src="imgchat" alt="Imagen de Chat" title="Chat de usuarios">
                         </div>
-                    </div>
-                    <div class="col-9">
-                        <h5 class="card-title">Chat</h5>
-                    </div>
-                    <div class="col-2">
-                        <button type="button" class="btn-close bg-white" data-bs-dismiss="alert" @click="cerrarForm" aria-label="Close"></button>
+                        <div class="col-9 col-md-10">
+                            <h5 class="card-title">Chat</h5>
+                        </div>
+                        <div class="col-1 col-md-1">
+                            <button type="button" class="btn-close bg-white" data-bs-dismiss="alert" @click="cerrarForm" aria-label="Close"></button>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row p-2">
-                        <div class="col-sm">
+                        <div class="col">
                             <ul id="ltsMensajes">
                                 <li v-for="msg in chats" :key="msg._id">
                                     {{ msg.from }} : <span>{{ msg.msg }}</span>
                                 </li>
                             </ul>
-                        </div>
-                        <div class="col-sm">
-
                         </div>
                     </div>
                 </div>
@@ -36,7 +33,7 @@
                         </div>
                         <div class="col-2">
                             <a @click="guardarChat">
-                                <img src="../../../public/img/enviar.png" title="Enviar mensaje" alt="Imagen de envio de mensajes">
+                                <img width="20" height="20" :src="imgenviar" title="Enviar mensaje" alt="Imagen de envio de mensajes">
                             </a>
                         </div>
                     </div>
@@ -47,9 +44,11 @@
 </template>
 <script>
     export default{
-        props: ['form'],
+        props:['form'],
         data(){
             return {
+                imgchat : 'img/chat.png',
+                imgenviar : 'img/enviar.png',
                 chat :{
                     id     : '',
                     from   : document.querySelector("#navbarDropdown").innerText,
@@ -93,9 +92,11 @@
                 if(permitirNotificaciones=='granted'){
                     let opciones = {
                         body: msg,
-                        icon: '../../../public/img/chat.png'
+                        icon: 'img/chat.png'
                     };
                     let notificaciones = new Notification(user, opciones);
+                    
+                    console.log(notificaciones);
                 }else{
                     console.log('No se puede mostrar notificaciones');
                 }
@@ -115,6 +116,6 @@
     #ltsMensajes{
         width: 450px;
         height: 350px;
-        overflow-y: scroll;
+        overflow-y: auto;
     }
 </style>
