@@ -2860,7 +2860,41 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     cerrarForm: function cerrarForm() {
       this.form['chat'].mostrar = false;
+    },
+    limpiar: function limpiar() {
+      this.chat.msg = '';
+    },
+    mostrarDatos: function mostrarDatos(chat) {
+      this.chats.push(chat);
+    },
+    obtenerDatos: function obtenerDatos() {
+      var _this = this;
+
+      sockectio.emit('historial'); //enviar un evento
+
+      sockectio.on('historial', function (chats) {
+        //escuchar un evento. //historial
+        _this.chats = chats;
+      });
+    },
+    guardarChat: function guardarChat() {
+      this.chat.id = generarIdUnicoFecha();
+
+      if (this.chat.msg != '') {
+        sockectio.emit('chat', this.chat);
+        this.limpiar();
+      } else {
+        console.log('Mensaje vacio');
+      }
     }
+  },
+  created: function created() {
+    var _this2 = this;
+
+    this.obtenerDatos();
+    sockectio.on('chat', function (chat) {
+      _this2.mostrarDatos(chat);
+    });
   }
 });
 
@@ -3566,6 +3600,11 @@ window.generarIdUnicoFecha = function () {
   var fecha = new Date();
   return Math.floor(fecha.getTime() / 1000).toString(16);
 };
+
+window.sockectio = io('http://localhost:3001');
+sockectio.on('connect', function (e) {
+  console.log('Conectado');
+});
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -3580,7 +3619,6 @@ window.generarIdUnicoFecha = function () {
 Vue.component('docente-component', require('./components/DocenteComponent.vue').default);
 Vue.component('matricula-component', require('./components/MatriculaComponent.vue').default);
 Vue.component('v-select-alumno', vSelect);*/
-
 
 
 
@@ -43009,103 +43047,125 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("form", [
-      _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-header" }, [
-          _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "col-1" }, [
-              _c("img", {
-                attrs: {
-                  width: "20",
-                  height: "20",
-                  src: _vm.imgchat,
-                  alt: "Imagen de chat",
-                  title: "chat de usuarios",
-                },
-              }),
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-10" }, [_vm._v("Chat de usuarios")]),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-1" }, [
-              _c("button", {
-                staticClass: "btn-close",
-                on: { click: _vm.cerrarForm },
-              }),
-            ]),
-          ]),
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "card-body" }, [
-          _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "col" }, [
-              _c(
-                "ul",
-                { attrs: { id: "ltsMensajes" } },
-                _vm._l(_vm.msgs, function (msg) {
-                  return _c("li", { key: msg._id }, [
-                    _vm._v(
-                      "\n                                " +
-                        _vm._s(msg.from) +
-                        " : " +
-                        _vm._s(msg.msg) +
-                        "\n                            "
-                    ),
-                  ])
-                }),
-                0
-              ),
-            ]),
-          ]),
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "card-footer" }, [
-          _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "col-10" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.chat.msg,
-                    expression: "chat.msg",
-                  },
-                ],
-                staticClass: "form-control",
-                attrs: {
-                  type: "text",
-                  required: "",
-                  placeholder: "Escribe tu mensaje aqui...",
-                },
-                domProps: { value: _vm.chat.msg },
-                on: {
-                  input: function ($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.$set(_vm.chat, "msg", $event.target.value)
-                  },
-                },
-              }),
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-2" }, [
-              _c("a", { on: { click: _vm.guardarChat } }, [
+    _c(
+      "form",
+      {
+        on: {
+          submit: function ($event) {
+            $event.preventDefault()
+            return _vm.guardarChat.apply(null, arguments)
+          },
+        },
+      },
+      [
+        _c("div", { staticClass: "card" }, [
+          _c("div", { staticClass: "card-header" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-1" }, [
                 _c("img", {
                   attrs: {
-                    width: "30",
-                    height: "30",
-                    src: _vm.imgenviar,
-                    alt: "Imagen de envio",
-                    title: "Enviar mensaje",
+                    width: "20",
+                    height: "20",
+                    src: _vm.imgchat,
+                    alt: "Imagen de chat",
+                    title: "chat de usuarios",
                   },
+                }),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-10" }, [
+                _vm._v("Chat de usuarios"),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-1" }, [
+                _c("button", {
+                  staticClass: "btn-close",
+                  on: { click: _vm.cerrarForm },
                 }),
               ]),
             ]),
           ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-body" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col" }, [
+                _c(
+                  "ul",
+                  { attrs: { id: "ltsMensajes" } },
+                  _vm._l(_vm.chats, function (msg) {
+                    return _c("li", { key: msg._id }, [
+                      _vm._v(
+                        "\n                                " +
+                          _vm._s(msg.from) +
+                          " : " +
+                          _vm._s(msg.msg) +
+                          "\n                            "
+                      ),
+                    ])
+                  }),
+                  0
+                ),
+              ]),
+            ]),
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-footer" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-10" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.chat.msg,
+                      expression: "chat.msg",
+                    },
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "text",
+                    required: "",
+                    placeholder: "Escribe tu mensaje aqui...",
+                  },
+                  domProps: { value: _vm.chat.msg },
+                  on: {
+                    keyup: function ($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.guardarChat.apply(null, arguments)
+                    },
+                    input: function ($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.chat, "msg", $event.target.value)
+                    },
+                  },
+                }),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-2" }, [
+                _c("a", { on: { click: _vm.guardarChat } }, [
+                  _c("img", {
+                    attrs: {
+                      width: "30",
+                      height: "30",
+                      src: _vm.imgenviar,
+                      alt: "Imagen de envio",
+                      title: "Enviar mensaje",
+                    },
+                  }),
+                ]),
+              ]),
+            ]),
+          ]),
         ]),
-      ]),
-    ]),
+      ]
+    ),
   ])
 }
 var staticRenderFns = []

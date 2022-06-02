@@ -104,9 +104,9 @@
         <matricula v-bind:form="forms" ref="matricula" v-show="forms['matricula'].mostrar" ></matricula>
         <chat v-bind:form="forms" ref="chat" v-show="forms['chat'].mostrar" ></chat>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
     <script src="https://unpkg.com/vue-resizable@1"></script>
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <script src="{{ asset('js/app.js') }}"></script>
 </body>
-
 </html>

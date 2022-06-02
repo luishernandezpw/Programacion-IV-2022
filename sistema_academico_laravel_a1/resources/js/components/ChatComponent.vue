@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <form>
+        <form v-on:submit.prevent="guardarChat">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
@@ -15,7 +15,7 @@
                     <div class="row">
                         <div class="col">
                             <ul id="ltsMensajes">
-                                <li v-for="msg in msgs" :key="msg._id">
+                                <li v-for="msg in chats" :key="msg._id">
                                     {{ msg.from }} : {{ msg.msg }}
                                 </li>
                             </ul>
@@ -25,7 +25,7 @@
                 <div class="card-footer">
                     <div class="row">
                         <div class="col-10">
-                            <input v-model="chat.msg" type="text" class="form-control" required placeholder="Escribe tu mensaje aqui...">
+                            <input @keyup.enter="guardarChat" v-model="chat.msg" type="text" class="form-control" required placeholder="Escribe tu mensaje aqui...">
                         </div>
                         <div class="col-2">
                             <a @click="guardarChat">
@@ -59,7 +59,36 @@
         methods:{
             cerrarForm(){
                 this.form['chat'].mostrar = false;
+            },
+            limpiar(){
+                this.chat.msg = '';
+            },
+            mostrarDatos(chat){
+                this.chats.push(chat);
+            },
+            obtenerDatos(){
+                sockectio.emit('historial');//enviar un evento
+                sockectio.on('historial',chats=>{ //escuchar un evento. //historial
+                    this.chats = chats;
+                });
+            },
+            guardarChat(){
+                this.chat.id = generarIdUnicoFecha();
+                if( this.chat.msg!='' ){
+                    sockectio.emit('chat', this.chat);
+                    this.limpiar();
+                } else{
+                    console.log('Mensaje vacio');
+                }
             }
+        },
+        created(){
+            this.obtenerDatos();
+
+            sockectio.on('chat', chat=>{
+                this.mostrarDatos(chat);
+
+            });
         }
     }
 </script>
